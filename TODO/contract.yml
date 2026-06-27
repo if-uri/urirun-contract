@@ -1,0 +1,12 @@
+name: contract
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install urirun-connectors-toolkit pytest
+      # CI jest DETERMINISTYCZNE: bez LLM. Kontrakt i wygenerowany kod są już w repo.
+      - run: bash ci/pre_commit.sh
