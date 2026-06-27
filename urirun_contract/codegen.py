@@ -109,8 +109,8 @@ def py_stub(route: str, c) -> str:
             f"    {ret}")
 
 
-def js_stub(route: str, c) -> str:
-    """Generate a JS handler skeleton."""
+def js_stub(route: str, c, *, enforce: bool = False) -> str:
+    """Generate a JS handler skeleton. ``enforce`` → return via ``ok(route, fields)`` (self-guard)."""
     inp = _inp(c)
     dargs = ", ".join(f"{k} = {_JS.get(_base(t), 'null')}" for k, t in inp.items()
                       if isinstance(t, str))
@@ -129,11 +129,12 @@ def js_stub(route: str, c) -> str:
         return {"str": '""', "int": "0", "bool": "false", "obj": "{}", "list": "[]"}.get(s, "null")  # type: ignore[arg-type]
 
     body = ", ".join(f"{k}: {jsval(v)}" for k, v in out_v.items())
+    ret = f'ok("{route}", {{ {body} }})' if enforce else f"ok({{ {body} }})"
     version = getattr(c, "version", "v1")
     return (f"// WYGENEROWANE Z KONTRAKTU {version} — kształt z contracts.json, nie edytuj ręcznie\n"
             f"export function {_camel(route)}({{ {dargs} }} = {{}}) {{\n"
             f'  throw new Error("ciało {route}");          // uzupełnij logikę, potem:\n'
-            f"  return ok({{ {body} }});\n"
+            f"  return {ret};\n"
             f"}}")
 
 
@@ -175,8 +176,28 @@ def emit_py_module(contracts: dict, header: str = "") -> str:
     return (header or default_header) + "\n\n".join(blocks) + "\n"
 
 
-def emit_js_module(contracts: dict, header: str = "") -> str:
-    """Generate a complete ESM (.mjs) module with handler stubs for all routes."""
+def emit_js_module(contracts: dict, header: str = "", *, sdk_import: "str | None" = None) -> str:
+    """Generate a complete ESM (.mjs) module with handler stubs for all routes.
+
+    ``sdk_import`` set → moduł SAM SIĘ PILNUJE: importuje ``check`` z SDK, wpieka schematy ``out``
+    i ``ok(route, fields)`` waliduje kopertę przed zwrotem (kształt rozjechany z kontraktem rzuca).
+    """
+    if sdk_import:
+        baked = json.dumps({route: _out(c) for route, c in sorted(contracts.items())},
+                           ensure_ascii=False)
+        default_header = (
+            "// WYGENEROWANE Z contracts.json — NIE EDYTUJ RĘCZNIE. Przegeneruj: `make gen-js`.\n"
+            f"import {{ check }} from {json.dumps(sdk_import)};\n"
+            f"const _OUT = {baked};\n"
+            "// self-guard: koperta walidowana out-schematem kontraktu PRZED zwrotem\n"
+            "export const ok = (route, fields) => {\n"
+            "  const env = { ok: true, ...fields };\n"
+            "  check(_OUT[route], env, `${route}.out`);\n"
+            "  return env;\n"
+            "};\n\n")
+        blocks = [js_stub(route, c, enforce=True) for route, c in sorted(contracts.items())]
+        return (header or default_header) + "\n\n".join(blocks) + "\n"
+
     default_header = ("// WYGENEROWANE Z contracts.json — NIE EDYTUJ RĘCZNIE. Przegeneruj: `make gen-js`.\n"
                       "// `ok(fields)` (koperta {ok:true,...}) dostarcza pakiet connectora — zaimportuj go:\n"
                       "//   import { ok } from './conn.mjs'\n"
@@ -185,8 +206,34 @@ def emit_js_module(contracts: dict, header: str = "") -> str:
     return (header or default_header) + "\n\n".join(blocks) + "\n"
 
 
-def emit_go_module(contracts: dict, header: str = "", *, package: str = "handlers") -> str:
-    """Generate a complete, compilable Go module with handler stubs for all routes."""
+def emit_go_module(contracts: dict, header: str = "", *, package: str = "handlers",
+                   sdk_import: "str | None" = None) -> str:
+    """Generate a complete, compilable Go module with handler stubs for all routes.
+
+    ``sdk_import`` set → emituje pomocnik ``Guard(route, env)`` (importuje SDK ``contract``,
+    wpieka schematy ``out``): autor ciała opakowuje swoją kopertę ``Guard`` przed zwrotem.
+    """
+    if sdk_import:
+        baked = json.dumps({route: _out(c) for route, c in sorted(contracts.items())},
+                           ensure_ascii=False)
+        default_header = (
+            "// WYGENEROWANE Z contracts.json — NIE EDYTUJ RĘCZNIE. Przegeneruj: `make gen-go`.\n"
+            f"package {package}\n\n"
+            "import (\n\t\"encoding/json\"\n\t\"fmt\"\n\n"
+            f"\tcontract {json.dumps(sdk_import)}\n)\n\n"
+            f"const _outJSON = `{baked}`\n\n"
+            "var _out map[string]interface{}\n\n"
+            "func init() {\n"
+            "\tif err := json.Unmarshal([]byte(_outJSON), &_out); err != nil {\n"
+            "\t\tpanic(err)\n\t}\n}\n\n"
+            "// Guard: zwaliduj kopertę out-schematem kontraktu PRZED zwrotem (opakuj nim ciało).\n"
+            "func Guard(route string, env map[string]interface{}) (map[string]interface{}, error) {\n"
+            "\tif err := contract.Check(_out[route], env, route+\".out\"); err != nil {\n"
+            "\t\treturn nil, fmt.Errorf(\"kontrakt %s: %w\", route, err)\n\t}\n"
+            "\treturn env, nil\n}\n\n")
+        blocks = [go_stub(route, c) for route, c in sorted(contracts.items())]
+        return (header or default_header) + "\n\n".join(blocks) + "\n"
+
     default_header = ("// WYGENEROWANE Z contracts.json — NIE EDYTUJ RĘCZNIE. Przegeneruj: `make gen-go`.\n"
                       f"package {package}\n\n"
                       'import "fmt"\n\n'

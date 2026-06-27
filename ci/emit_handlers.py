@@ -6,7 +6,12 @@ Importuje codegen z urirun_contract (jedyne źródło — nie przepisuj tu py_st
   python ci/emit_handlers.py                              # py → src/handlers_generated.py
   python ci/emit_handlers.py --lang js                    # js → src/handlers_generated.mjs
   python ci/emit_handlers.py --lang go contracts.json     # go → src/handlers_generated.go
+  python ci/emit_handlers.py --lang js --enforce ./contract.mjs   # moduł SAM SIĘ PILNUJE
   python ci/emit_handlers.py --lang go contracts.json -   # stdout
+
+`--enforce <import>` (tylko js/go): wygenerowany moduł importuje guard z SDK i waliduje
+kopertę out-schematem kontraktu. `<import>` to specyfikator importu SDK (np. ścieżka do
+sdk/js/contract.mjs albo ścieżka modułu Go uriruncontract/contract).
 
 Ten sam contracts.json → szkielet w Pythonie, JS i Go: urirun jako SDK w wielu językach.
 Wymaga: pip install urirun-contract
@@ -29,26 +34,37 @@ _LANGS = {
 }
 
 
-def emit(contracts_path: str, lang: str = "py") -> str:
+def emit(contracts_path: str, lang: str = "py", sdk_import: "str | None" = None) -> str:
     emitter, _ = _LANGS[lang]
-    return emitter(_load_contracts_json(contracts_path))
+    contracts = _load_contracts_json(contracts_path)
+    if sdk_import and lang in ("js", "go"):
+        return emitter(contracts, sdk_import=sdk_import)
+    if sdk_import:
+        raise SystemExit("--enforce działa tylko z --lang js|go")
+    return emitter(contracts)
 
 
-def _parse(argv: list[str]) -> tuple[str, str, str]:
-    lang = "py"
-    if argv and argv[0] == "--lang":
-        lang = argv[1]
-        argv = argv[2:]
+def _parse(argv: list[str]) -> tuple[str, str, str, "str | None"]:
+    lang, sdk_import = "py", None
+    rest: list[str] = []
+    i = 0
+    while i < len(argv):
+        if argv[i] == "--lang":
+            lang = argv[i + 1]; i += 2
+        elif argv[i] == "--enforce":
+            sdk_import = argv[i + 1]; i += 2
+        else:
+            rest.append(argv[i]); i += 1
     if lang not in _LANGS:
         raise SystemExit(f"nieznany język {lang!r}; wybierz z {sorted(_LANGS)}")
-    contracts_path = argv[0] if argv else os.path.join(ROOT, "contracts.json")
-    out_path = argv[1] if len(argv) > 1 else os.path.join(ROOT, _LANGS[lang][1])
-    return lang, contracts_path, out_path
+    contracts_path = rest[0] if rest else os.path.join(ROOT, "contracts.json")
+    out_path = rest[1] if len(rest) > 1 else os.path.join(ROOT, _LANGS[lang][1])
+    return lang, contracts_path, out_path, sdk_import
 
 
 if __name__ == "__main__":
-    lang, contracts_path, out_path = _parse(sys.argv[1:])
-    code = emit(contracts_path, lang)
+    lang, contracts_path, out_path, sdk_import = _parse(sys.argv[1:])
+    code = emit(contracts_path, lang, sdk_import)
     if out_path == "-":
         sys.stdout.write(code)
     else:

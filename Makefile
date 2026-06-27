@@ -18,11 +18,11 @@ contract: ## README.md → contracts.json (lokalny LLM, bramkowane)
 gen: ## contracts.json → src/handlers_generated.py
 	$(PY) ci/emit_handlers.py
 
-gen-js: ## contracts.json → src/handlers_generated.mjs (szkielet JS)
-	$(PY) ci/emit_handlers.py --lang js $(CONTRACTS)
+gen-js: ## contracts.json → handlers_generated.mjs (SDK=<import> → moduł sam się pilnuje)
+	$(PY) ci/emit_handlers.py --lang js $(if $(SDK),--enforce $(SDK)) $(CONTRACTS)
 
-gen-go: ## contracts.json → src/handlers_generated.go (szkielet Go, gofmt-clean)
-	$(PY) ci/emit_handlers.py --lang go $(CONTRACTS)
+gen-go: ## contracts.json → handlers_generated.go (SDK=<import> → pomocnik Guard)
+	$(PY) ci/emit_handlers.py --lang go $(if $(SDK),--enforce $(SDK)) $(CONTRACTS)
 
 schema: ## contracts.json → JSON Schema (draft 2020-12) obok kontraktu
 	$(PY) ci/emit_jsonschema.py $(CONTRACTS)

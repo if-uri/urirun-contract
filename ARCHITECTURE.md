@@ -100,6 +100,12 @@ CLI parytetu (`node contract.mjs <json> <route>` / `go run ./cmd/enforce <json> 
 ze stdin → `OK`/`VIOLATION`). `make enforce-xlang` dowodzi: ta sama złota koperta przechodzi w
 Py/JS/Go, ten sam fixture dryfu (bool→string łamie `const:true`) jest łapany wszędzie.
 
+**Generator spięty z SDK** (`emit_handlers.py --enforce <import>`, `make gen-js SDK=...`): wygenerowany
+moduł JS importuje `check` z SDK, wpieka schematy `out` i `ok(route, fields)` waliduje kopertę PRZED
+zwrotem (zła koperta rzuca). Go emituje pomocnik `Guard(route, env)` (importuje `contract.Check`).
+Domyka pętlę generuj→samo-pilnuj: connector w JS/Go nie może po cichu zwrócić koperty niezgodnej
+z kontraktem. JS dowiedziony runtime, Go kompilacją z SDK (`tests/test_codegen_enforce.py`).
+
 ## Driver konformancji (zewnętrzny, po drucie)
 
 `conform` (gate.py) waliduje kontrakt i złoty korpus *w jednym procesie* — to konformancja
@@ -141,7 +147,8 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 - ✅ Runtime `enforce` per język (JS/Go) — reużywalny guard koperty `sdk/js` + `sdk/go`,
   parytet z kernelem na złotym korpusie + fixture dryfu (`make enforce-xlang`,
   `tests/test_runtime_enforce_xlang.py`)
-- Opublikować `urirun-contract` na PyPI → re-eksport toolkit bez `@git+...` w Dockerfile
-- Generowane szkielety JS/Go wołają `sdk` enforce automatycznie (dziś SDK jest dostępny,
-  ale stub go nie importuje) + go.mod publikowalny jako moduł
+- ✅ Generowane szkielety JS/Go spięte z SDK (`--enforce`) — moduł sam waliduje kopertę
+  (`tests/test_codegen_enforce.py`)
+- Opublikować `urirun-contract` na PyPI (+ `sdk/go` jako publikowalny moduł, `sdk/js` jako pakiet npm)
+  → re-eksport toolkit bez `@git+...`, `--enforce` z bare-specifier zamiast ścieżki
 - Wersjonowanie additive-only per trasa (lub proto `to_proto`)
