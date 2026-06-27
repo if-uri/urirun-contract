@@ -49,7 +49,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `contract_gate` / `gate` | `check`, `enforce`, `conform`, `check_wire`, `wire_payload`, `consumer_input_check` |
 | `codegen` | `py_stub`/`js_stub`/`go_stub`, `emit_py_module` |
 | `contract_lint` | `lint_handler_signatures` — handler bez kontraktu / sygnatura != generowana |
-| `contract_reversible` | `callspecs_from_contracts` — odwracalność z kontraktów dla silnika Twin |
+| `contract_reversible` | `callspecs_from_contracts` → most `urirun_twin.reversible.schema_from_contracts`: kontrakt jako schemat odwracalności silnika (strategia #3, `Connector.schema()` zwraca to zamiast ręcznych CallSpec). **Runtime ledger nadal jedzie konwencją „inverse w wyniku" (#2)**; most udowodniony end-to-end (`test_reversible.py::test_contract_derived_schema_drives_the_engine_invariant`) |
 | `contract_jsonschema` | `to_json_schema` — eksport do standardowego JSON Schema |
 | `contract_compat` | `compare_route`/`incompatibilities` — additive-only per trasa (wariancja inp/out) |
 | `nl_to_contract` (ci) | README → LLM → `contracts.json`, bramkowane przez `validate_doc` |
