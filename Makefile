@@ -1,4 +1,5 @@
-.PHONY: help test contract gen gen-js gen-go schema enforce-xlang check lint install integration single-source conformance
+.PHONY: help test contract gen gen-js gen-go schema enforce-xlang compat freeze check lint install integration single-source conformance
+BASELINE ?= examples/windowpair/contracts.baseline.json
 PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
 CONTRACTS ?= examples/windowpair/contracts.json
@@ -29,6 +30,12 @@ schema: ## contracts.json → JSON Schema (draft 2020-12) obok kontraktu
 
 enforce-xlang: ## Parytet runtime enforce Py/JS/Go na złotej kopercie + fixture dryfu
 	$(PY) -m pytest tests/test_runtime_enforce_xlang.py -q
+
+compat: ## Brama additive-only: contracts.json wstecznie zgodny z baseline (inaczej bump wersji)
+	$(PY) ci/check_compat.py $(BASELINE) $(CONTRACTS)
+
+freeze: ## Zamroź obecny contracts.json jako baseline kompatybilności (po świadomej zmianie)
+	cp $(CONTRACTS) $(BASELINE)
 
 check: ## wszystkie bramy lokalne (bez LLM, te same co CI)
 	bash ci/pre_commit.sh

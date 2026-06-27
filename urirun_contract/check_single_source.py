@@ -26,6 +26,7 @@ MARKERS = {
     "jsonschema": [r"^def to_json_schema\("],
     "lint": [r"^def lint_handler_signatures\("],
     "reversible": [r"^def callspecs_from_contracts\("],
+    "compat": [r"^def incompatibilities\(", r"^def compare_route\("],
     # sama brama też ma jedno źródło — pełna kopia (definiuje MARKERS + defines) = FAIL; shim = OK
     "single_source_guard": [r"^MARKERS = \{", r"^def defines\("],
 }

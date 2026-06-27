@@ -26,9 +26,10 @@ implementacji, dryfowały pod LLM. **Teza**: uczynić kontrakt deklarowanym, wer
 | JSON Schema | `urirun_contract/contract_jsonschema.py` | re-eksport |
 | lint | `urirun_contract/contract_lint.py` | re-eksport |
 | reversible | `urirun_contract/contract_reversible.py` | re-eksport |
+| compat | `urirun_contract/contract_compat.py` | re-eksport |
 
 Brama: `check_single_source.py` (FAIL jeśli >1 definicja kernela, np. `consumer_input_check`,
-`py_stub`, `to_json_schema`, `lint_handler_signatures`, `callspecs_from_contracts`).
+`py_stub`, `to_json_schema`, `lint_handler_signatures`, `callspecs_from_contracts`, `incompatibilities`).
 CI weryfikuje to przy każdym push.
 
 ## Artefakt kontraktu
@@ -49,6 +50,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `contract_lint` | `lint_handler_signatures` — handler bez kontraktu / sygnatura != generowana |
 | `contract_reversible` | `callspecs_from_contracts` — odwracalność z kontraktów dla silnika Twin |
 | `contract_jsonschema` | `to_json_schema` — eksport do standardowego JSON Schema |
+| `contract_compat` | `compare_route`/`incompatibilities` — additive-only per trasa (wariancja inp/out) |
 | `nl_to_contract` (ci) | README → LLM → `contracts.json`, bramkowane przez `validate_doc` |
 | `attach_contracts` | Wzbogaca `bindings()` o `outputSchema`/`examples`/`effect`/`errors` |
 
@@ -59,13 +61,24 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `conform` | efekt↔czasownik URI, wzajemny inverse, przykłady, args-inverse | pre-commit + CI |
 | `lint_handler_signatures` | sygnatura/koperta = to, co wygenerowałby codegen | pre-commit + CI |
 | `regen-check` | `handlers_generated.py` == świeża generacja | pre-commit + CI |
-| `check_single_source.py` | jedyne definicje kernela (gate/codegen/jsonschema/lint/reversible) | pytest + CI |
+| `check_single_source.py` | jedyne definicje kernela (gate/codegen/jsonschema/lint/reversible/compat) | pytest + CI |
 | `test_no_kernel_drift` | shim toolkit re-eksportuje DOKŁADNIE `__all__`, te same obiekty (`is`) | pytest + CI |
+| `check_compat.py` | zmiana trasy przy tej samej wersji wstecznie kompatybilna (vs baseline) | pre-commit + CI |
 | `enforce` (runtime) | wyjście handlera zgodne z `out` | dev/CI (URIRUN_CONTRACT_CHECK=1) |
 | `check` na granicy serwisu | producent waliduje out, konsument waliduje inp | runtime |
 | `consumer_input_check` | cross-process: typy, pełny vs częściowy handoff | CI |
 
 **Niezmiennik: kontrakt bez egzekucji w domyślnym torze CI to zielony shim, który kłamie.**
+
+### Wersjonowanie additive-only (`contract_compat`)
+
+Zmiana kontraktu trasy przy TEJ SAMEJ wersji musi być wstecznie kompatybilna; zmiana łamiąca
+wymaga bumpa `version` (v1→v2) albo świadomego przemrożenia baseline (`make freeze`). Sednem jest
+**wariancja**: `out` kowariantne (obietnica producenta — wolno dodać pole / wzmocnić `?T`→`T`, nie
+wolno usunąć / osłabić `T`→`?T`), `inp` kontrawariantne (obowiązek wołającego — wolno dodać
+opcjonalne / zluzować `T`→`?T` / usunąć wymóg, nie wolno dodać wymagane / zacieśnić `?T`→`T`).
+Brama `check_compat.py` porównuje `contracts.json` z zamrożonym `contracts.baseline.json`; głębokie
+zmiany struktury (oneOf/enum) traktowane konserwatywnie (różne = łamiące). `make compat` / `make freeze`.
 
 ## Format projektu `urirun-contract-*`
 
@@ -149,6 +162,8 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
   `tests/test_runtime_enforce_xlang.py`)
 - ✅ Generowane szkielety JS/Go spięte z SDK (`--enforce`) — moduł sam waliduje kopertę
   (`tests/test_codegen_enforce.py`)
+- ✅ Wersjonowanie additive-only per trasa — `contract_compat` (wariancja inp/out) + brama
+  `check_compat.py` vs baseline (`make compat`/`freeze`, `tests/test_compat.py`)
 - Opublikować `urirun-contract` na PyPI (+ `sdk/go` jako publikowalny moduł, `sdk/js` jako pakiet npm)
   → re-eksport toolkit bez `@git+...`, `--enforce` z bare-specifier zamiast ścieżki
-- Wersjonowanie additive-only per trasa (lub proto `to_proto`)
+- Eksport `to_proto`/protobuf obok JSON Schema (binarne kontrakty cross-lang)
