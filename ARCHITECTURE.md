@@ -27,10 +27,11 @@ implementacji, dryfowały pod LLM. **Teza**: uczynić kontrakt deklarowanym, wer
 | lint | `urirun_contract/contract_lint.py` | re-eksport |
 | reversible | `urirun_contract/contract_reversible.py` | re-eksport |
 | compat | `urirun_contract/contract_compat.py` | re-eksport |
+| scaffold | `urirun_contract/contract_scaffold.py` | re-eksport |
 
 Brama: `check_single_source.py` (FAIL jeśli >1 definicja kernela, np. `consumer_input_check`,
-`py_stub`, `to_json_schema`, `lint_handler_signatures`, `callspecs_from_contracts`, `incompatibilities`).
-CI weryfikuje to przy każdym push.
+`py_stub`, `to_json_schema`, `lint_handler_signatures`, `callspecs_from_contracts`, `incompatibilities`,
+`contracts_from_manifest`). CI weryfikuje to przy każdym push.
 
 ## Artefakt kontraktu
 
@@ -69,6 +70,18 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `consumer_input_check` | cross-process: typy, pełny vs częściowy handoff | CI |
 
 **Niezmiennik: kontrakt bez egzekucji w domyślnym torze CI to zielony shim, który kłamie.**
+
+### Adopcja floty (`contract_scaffold` + `fleet_coverage`)
+
+~37 konektorów, kontrakt ma ~6 — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
+`contract_scaffold.contracts_from_manifest`/`contracts_from_routes` buduje szkielet `contracts.json`
+z tras connectora. Trasy odkrywane z DWÓCH źródeł: `discover_routes` (dekoratory `@conn.handler/
+command/query` w `core.py` — źródło prawdy connectorów Python) + `connector.manifest.json`. Efekt z
+czasownika trasy, wejście wywnioskowane z przykładów; `out`/`reversible`/`errors` zostają puste —
+`scaffold_gaps` mówi, co człowiek/LLM ma dopisać. Szkielet KONFORMUJE od razu (poprawny punkt
+startowy, nie śmieć). `ci/fleet_coverage.py` raportuje pokrycie i NAZYWA konektory z trasą mutującą
+(`/command/`) bez kontraktu (`--strict` → exit 1); konektor bez wykrywalnych tras jest raportowany
+JAWNIE jako „nieznany", nie cicho przepuszczany. `make scaffold CONN=...` / `make fleet-coverage`.
 
 ### Wersjonowanie additive-only (`contract_compat`)
 

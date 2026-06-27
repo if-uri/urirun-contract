@@ -1,8 +1,9 @@
-.PHONY: help test contract gen gen-js gen-go schema enforce-xlang compat freeze check lint install integration single-source conformance
+.PHONY: help test contract gen gen-js gen-go schema enforce-xlang compat freeze scaffold fleet-coverage check lint install integration single-source conformance
 BASELINE ?= examples/windowpair/contracts.baseline.json
 PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
 CONTRACTS ?= examples/windowpair/contracts.json
+FLEET ?= ..
 
 help: ## Lista celów
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-12s %s\n",$$1,$$2}'
@@ -36,6 +37,12 @@ compat: ## Brama additive-only: contracts.json wstecznie zgodny z baseline (inac
 
 freeze: ## Zamroź obecny contracts.json jako baseline kompatybilności (po świadomej zmianie)
 	cp $(CONTRACTS) $(BASELINE)
+
+scaffold: ## Szkielet contracts.json z connectora (CONN=<katalog|manifest.json>)
+	$(PY) ci/scaffold_contract.py $(CONN)
+
+fleet-coverage: ## Pokrycie floty kontraktami (FLEET=<root>, STRICT=1 → fail na mutującym bez kontraktu)
+	$(PY) ci/fleet_coverage.py $(FLEET) $(if $(STRICT),--strict,)
 
 check: ## wszystkie bramy lokalne (bez LLM, te same co CI)
 	bash ci/pre_commit.sh
