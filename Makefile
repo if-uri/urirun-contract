@@ -34,9 +34,9 @@ conformance: ## Driver bije w żywy węzeł (peer serve-http) i waliduje koperty
 	 kill $$P 2>/dev/null; exit $$CODE
 
 integration: ## Test HTTP end-to-end (py→py + py→go) bez Dockera
-	@CONTRACTS=contracts.json PORT=8801 $(PY) packages/producer/service.py & P1=$$!; \
-	 CONTRACTS=contracts.json PORT=8802 $(PY) packages/consumer/service.py & P2=$$!; \
-	 go build -C packages/consumer-go -o /tmp/_consumer-go . && CONTRACTS=$$PWD/contracts.json PORT=8803 /tmp/_consumer-go & P3=$$!; \
+	@CONTRACTS=$(CONTRACTS) PORT=8801 $(PY) packages/producer/service.py & P1=$$!; \
+	 CONTRACTS=$(CONTRACTS) PORT=8802 $(PY) packages/consumer/service.py & P2=$$!; \
+	 go build -C packages/consumer-go -o /tmp/_consumer-go . && CONTRACTS=$$PWD/$(CONTRACTS) PORT=8803 /tmp/_consumer-go & P3=$$!; \
 	 sleep 2; \
-	 CONTRACTS=contracts.json CONSUMER_GO_URL=http://localhost:8803 $(PY) orchestrator/drive.py; CODE=$$?; \
+	 CONTRACTS=$(CONTRACTS) CONSUMER_GO_URL=http://localhost:8803 $(PY) orchestrator/drive.py; CODE=$$?; \
 	 kill $$P1 $$P2 $$P3 2>/dev/null; exit $$CODE

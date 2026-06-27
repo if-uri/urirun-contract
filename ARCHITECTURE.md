@@ -23,9 +23,12 @@ implementacji, dryfowały pod LLM. **Teza**: uczynić kontrakt deklarowanym, wer
 |---|---|---|
 | gate | `urirun_contract/gate.py` | `from urirun_contract.gate import *` |
 | codegen | `urirun_contract/codegen.py` | `from urirun_contract.codegen import ...` |
-| toolkit bundled copy | `urirun_connectors_toolkit/contract_gate.py` | synchronizowany z gate.py przy każdej zmianie |
+| JSON Schema | `urirun_contract/contract_jsonschema.py` | re-eksport |
+| lint | `urirun_contract/contract_lint.py` | re-eksport |
+| reversible | `urirun_contract/contract_reversible.py` | re-eksport |
 
-Brama: `check_single_source.py` (FAIL jeśli >1 definicja `consumer_input_check`/`py_stub`).
+Brama: `check_single_source.py` (FAIL jeśli >1 definicja kernela, np. `consumer_input_check`,
+`py_stub`, `to_json_schema`, `lint_handler_signatures`, `callspecs_from_contracts`).
 CI weryfikuje to przy każdym push.
 
 ## Artefakt kontraktu
@@ -43,7 +46,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 |---|---|
 | `contract_gate` / `gate` | `check`, `enforce`, `conform`, `check_wire`, `wire_payload`, `consumer_input_check` |
 | `codegen` | `py_stub`/`js_stub`/`go_stub`, `emit_py_module` |
-| `contract_lint` | `lint_handler_signatures` — handler bez kontraktu / sygnatura ≠ generowana |
+| `contract_lint` | `lint_handler_signatures` — handler bez kontraktu / sygnatura != generowana |
 | `contract_reversible` | `callspecs_from_contracts` — odwracalność z kontraktów dla silnika Twin |
 | `contract_jsonschema` | `to_json_schema` — eksport do standardowego JSON Schema |
 | `nl_to_contract` (ci) | README → LLM → `contracts.json`, bramkowane przez `validate_doc` |
@@ -56,7 +59,8 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `conform` | efekt↔czasownik URI, wzajemny inverse, przykłady, args-inverse | pre-commit + CI |
 | `lint_handler_signatures` | sygnatura/koperta = to, co wygenerowałby codegen | pre-commit + CI |
 | `regen-check` | `handlers_generated.py` == świeża generacja | pre-commit + CI |
-| `check_single_source.py` | jedyne definicje gate/codegen | CI |
+| `check_single_source.py` | jedyne definicje kernela (gate/codegen/jsonschema/lint/reversible) | pytest + CI |
+| `test_no_kernel_drift` | shim toolkit re-eksportuje DOKŁADNIE `__all__`, te same obiekty (`is`) | pytest + CI |
 | `enforce` (runtime) | wyjście handlera zgodne z `out` | dev/CI (URIRUN_CONTRACT_CHECK=1) |
 | `check` na granicy serwisu | producent waliduje out, konsument waliduje inp | runtime |
 | `consumer_input_check` | cross-process: typy, pełny vs częściowy handoff | CI |
@@ -102,9 +106,11 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 
 ## Znane problemy (do naprawy)
 
-1. `urirun_connectors_toolkit/contract_gate.py` — bundled copy (437L), zsynchronizowany
-   dziś z gate.py. Wymaga ręcznej synchronizacji przy zmianach; docelowo re-eksport gdy
-   `urirun-contract` trafi na PyPI i stanie się zależnością toolkit.
+1. `urirun_connectors_toolkit/contract_gate.py` (i kopie `toolkit/` w projektach `urirun-contract-*`)
+   to shimy re-eksportujące CAŁY pakiet: `from urirun_contract import *` (nie `.gate` — kernel rozlał
+   się na gate/jsonschema/lint/reversible, więc import z `.gate` gubił `to_json_schema`/`lint`/`callspecs`).
+   Nie wolno przywracać lokalnej kopii kernela ani importu z `.gate`; pilnują tego `check_single_source.py`
+   (jedna definicja) + `test_no_kernel_drift` (shim == `__all__`, te same obiekty).
 
 2. `TODO/` usunięty — były to stare szablony z nieaktualnym API.
 

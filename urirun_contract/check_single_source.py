@@ -23,6 +23,9 @@ import sys
 MARKERS = {
     "gate":    [r"^def consumer_input_check\(", r"^def check_wire\(", r"^class ContractViolation\b"],
     "codegen": [r"^def py_stub\(", r"^def go_stub\("],
+    "jsonschema": [r"^def to_json_schema\("],
+    "lint": [r"^def lint_handler_signatures\("],
+    "reversible": [r"^def callspecs_from_contracts\("],
     # sama brama też ma jedno źródło — pełna kopia (definiuje MARKERS + defines) = FAIL; shim = OK
     "single_source_guard": [r"^MARKERS = \{", r"^def defines\("],
 }
