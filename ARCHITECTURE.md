@@ -91,6 +91,15 @@ Peery: Python + Go (`service.go`). Złote `examples` = językowo-neutralny korpu
 Tarcia per język:
 - Go: zero-values → waliduj `map[string]any`, nie struct; liczby jako `float64` → int = sprawdź całkowitość
 
+### SDK runtime (`sdk/`)
+
+`sdk/js/contract.mjs` i `sdk/go/contract/` to reużywalne guardy koperty — port 1:1 kernela
+(`check` + `envelopeViolation`). Connector w JS/Go woła `envelopeViolation(contract, env)` przed
+zwróceniem koperty: kształt rozjechany z kontraktem → komunikat zamiast cichego dryfu. Każdy ma
+CLI parytetu (`node contract.mjs <json> <route>` / `go run ./cmd/enforce <json> <route>`, koperta
+ze stdin → `OK`/`VIOLATION`). `make enforce-xlang` dowodzi: ta sama złota koperta przechodzi w
+Py/JS/Go, ten sam fixture dryfu (bool→string łamie `const:true`) jest łapany wszędzie.
+
 ## Driver konformancji (zewnętrzny, po drucie)
 
 `conform` (gate.py) waliduje kontrakt i złoty korpus *w jednym procesie* — to konformancja
@@ -129,6 +138,10 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 - ✅ Polyglot SDK — `emit_js_module`/`emit_go_module` + `ci/emit_handlers.py --lang py|js|go`
   (`make gen-js`/`gen-go`); JS przechodzi `node --check`, Go kompiluje się i jest gofmt-clean
   (`tests/test_polyglot_emit.py`)
+- ✅ Runtime `enforce` per język (JS/Go) — reużywalny guard koperty `sdk/js` + `sdk/go`,
+  parytet z kernelem na złotym korpusie + fixture dryfu (`make enforce-xlang`,
+  `tests/test_runtime_enforce_xlang.py`)
 - Opublikować `urirun-contract` na PyPI → re-eksport toolkit bez `@git+...` w Dockerfile
-- Runtime `enforce` per język (JS/Go) — guard koperty na granicy, nie tylko szkielet
+- Generowane szkielety JS/Go wołają `sdk` enforce automatycznie (dziś SDK jest dostępny,
+  ale stub go nie importuje) + go.mod publikowalny jako moduł
 - Wersjonowanie additive-only per trasa (lub proto `to_proto`)

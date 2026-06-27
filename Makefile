@@ -1,4 +1,4 @@
-.PHONY: help test contract gen gen-js gen-go schema check lint install integration single-source conformance
+.PHONY: help test contract gen gen-js gen-go schema enforce-xlang check lint install integration single-source conformance
 PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
 CONTRACTS ?= examples/windowpair/contracts.json
@@ -26,6 +26,9 @@ gen-go: ## contracts.json → src/handlers_generated.go (szkielet Go, gofmt-clea
 
 schema: ## contracts.json → JSON Schema (draft 2020-12) obok kontraktu
 	$(PY) ci/emit_jsonschema.py $(CONTRACTS)
+
+enforce-xlang: ## Parytet runtime enforce Py/JS/Go na złotej kopercie + fixture dryfu
+	$(PY) -m pytest tests/test_runtime_enforce_xlang.py -q
 
 check: ## wszystkie bramy lokalne (bez LLM, te same co CI)
 	bash ci/pre_commit.sh
