@@ -10,7 +10,7 @@ import (
 	"io"
 	"os"
 
-	"uriruncontract/contract"
+	"github.com/if-uri/urirun-contract/sdk/go/contract"
 )
 
 func main() {

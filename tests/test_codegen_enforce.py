@@ -36,8 +36,11 @@ def test_js_enforce_mode_imports_sdk_and_self_guards(contracts):
     assert 'ok("window/command/close"' in code  # stub przekazuje trasę
 
 
+GO_IMPORT = "github.com/if-uri/urirun-contract/sdk/go/contract"
+
+
 def test_go_enforce_mode_emits_guard(contracts):
-    code = emit_go_module(contracts, sdk_import="uriruncontract/contract")
+    code = emit_go_module(contracts, sdk_import=GO_IMPORT)
     assert "contract.Check(_out[route]" in code
     assert "func Guard(route string" in code
     assert "func init()" in code
@@ -73,13 +76,14 @@ def test_js_self_guard_runtime(contracts, tmp_path):
 
 @pytest.mark.skipif(not (shutil.which("go") and shutil.which("gofmt")), reason="brak go/gofmt")
 def test_go_enforce_compiles_with_sdk(contracts, tmp_path):
-    code = emit_go_module(contracts, sdk_import="uriruncontract/contract")
+    code = emit_go_module(contracts, sdk_import=GO_IMPORT)
     f = tmp_path / "handlers.go"
     f.write_text(code)
     fmt = subprocess.run(["gofmt", "-l", str(f)], capture_output=True, text=True)
     assert fmt.stdout.strip() == "", f"nie gofmt-clean: {fmt.stdout}"
+    mod = "github.com/if-uri/urirun-contract/sdk/go"
     (tmp_path / "go.mod").write_text(
-        f"module hgen\n\ngo 1.21\n\nrequire uriruncontract v0.0.0\n\nreplace uriruncontract => {GO_SDK}\n"
+        f"module hgen\n\ngo 1.21\n\nrequire {mod} v0.0.0\n\nreplace {mod} => {GO_SDK}\n"
     )
     build = subprocess.run(["go", "build", "./..."], cwd=tmp_path, capture_output=True, text=True)
     assert build.returncode == 0, build.stderr

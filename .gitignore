@@ -271,3 +271,8 @@ __marimo__/
 # urirun generated discovery cache (embeds per-run timestamps — not source)
 .urirun/discovered-registry.json
 **/.urirun/discovered-registry.json
+
+dist/
+build/
+*.egg-info/
+sdk/js/*.tgz

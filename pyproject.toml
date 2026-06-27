@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,14 +7,26 @@ name = "urirun-contract"
 version = "0.1.0"
 description = "Route contracts for urirun connectors — declared output shape, effect class, reversibility and composition wires"
 readme = "README.md"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [{ name = "Tom Sapletta", email = "info@softreck.dev" }]
 requires-python = ">=3.10"
+keywords = ["urirun", "contract", "connector", "json-schema", "codegen", "polyglot", "validation"]
 dependencies = []  # zero required deps — gate works standalone; urirun optional for attach_contracts
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Quality Assurance",
+    "Typing :: Typed",
+]
 
 [project.optional-dependencies]
 urirun = ["urirun>=0.4"]
-dev   = ["pytest>=7", "radon"]
+dev = ["pytest>=7", "radon", "jsonschema", "build", "twine"]
 
 [project.urls]
 Homepage   = "https://urirun.com"

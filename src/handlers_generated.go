@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	contract "uriruncontract/contract"
+	contract "github.com/if-uri/urirun-contract/sdk/go/contract"
 )
 
 const _outJSON = `{"window/command/close": {"action": "const:window-close", "reversible": "const:true", "snapshot": "obj", "inverse": {"path": "const:window/command/restore", "args": {"snapshot": "obj"}}}, "window/command/restore": {"action": "const:window-restore", "reversible": "const:true", "inverse": {"path": "const:window/command/close", "args": {"id": "?str"}}}}`

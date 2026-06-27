@@ -11,7 +11,7 @@ Importuje codegen z urirun_contract (jedyne źródło — nie przepisuj tu py_st
 
 `--enforce <import>` (tylko js/go): wygenerowany moduł importuje guard z SDK i waliduje
 kopertę out-schematem kontraktu. `<import>` to specyfikator importu SDK (np. ścieżka do
-sdk/js/contract.mjs albo ścieżka modułu Go uriruncontract/contract).
+sdk/js/contract.mjs albo ścieżka modułu Go github.com/if-uri/urirun-contract/sdk/go/contract).
 
 Ten sam contracts.json → szkielet w Pythonie, JS i Go: urirun jako SDK w wielu językach.
 Wymaga: pip install urirun-contract
@@ -22,6 +22,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
 
 from urirun_contract.codegen import (  # noqa: E402
     _load_contracts_json, emit_go_module, emit_js_module, emit_py_module,
