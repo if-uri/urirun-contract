@@ -20,11 +20,18 @@ import sys
 from types import SimpleNamespace
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-_DOC = json.load(open(os.path.join(HERE, "contracts.json")))
+# Generyczny węzeł: CONTRACTS wskazuje na contracts.json DOWOLNEGO connectora.
+# Domyślnie kanoniczny egzemplarz windowpair (katalog xlang/ nie trzyma kopii).
+_CONTRACTS_PATH = os.environ.get(
+    "CONTRACTS",
+    os.path.join(HERE, "..", "examples", "windowpair", "contracts.json"),
+)
+_DOC = json.load(open(_CONTRACTS_PATH))
 CONTRACTS = {route: SimpleNamespace(**{**c, "inverse_route": c.get("inverseRoute") or ""})
              for route, c in _DOC["contracts"].items()}
 WIRES = [SimpleNamespace(**w) for w in _DOC.get("wires", [])]
 
+sys.path.insert(0, os.path.join(HERE, ".."))  # uruchamialny jako skrypt bez instalacji
 from urirun_contract import consumer_input_check, wire_payload  # noqa: E402
 from urirun_contract.gate import check, conform as _conform     # noqa: E402
 
