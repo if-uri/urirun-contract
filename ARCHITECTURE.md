@@ -87,6 +87,19 @@ Peery: Python + Go (`service.go`). Złote `examples` = językowo-neutralny korpu
 Tarcia per język:
 - Go: zero-values → waliduj `map[string]any`, nie struct; liczby jako `float64` → int = sprawdź całkowitość
 
+## Driver konformancji (zewnętrzny, po drucie)
+
+`conform` (gate.py) waliduje kontrakt i złoty korpus *w jednym procesie* — to konformancja
+**u siebie**. Węzeł może ją przejść, a mimo to **kłamać na drucie**: zserializować int/bool
+jako string, zgubić pole, zwrócić nieobjętą taksonomią klasę błędu. `adapters/conformance.py`
+to łapie, bo czyta to, co realnie wyszło z gniazda HTTP — nie obiekt Pythona.
+
+Dla każdej trasy ze złotym przykładem ok: bierze `payload`, POST do żywego węzła, wyciąga
+kopertę z odpowiedzi, woła `envelope_violation(contract, envelope)`. Exit code = liczba
+naruszeń. Profile transportu: `peer` (generyczny `xlang/peer.py serve-http`, steruje wszystkie
+trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make conformance` / fikstura
+`xlang/peer.py serve-http --lie` dowodzą obu kierunków (zgodny → 0, kłamiący → ≥1).
+
 ## Znane problemy (do naprawy)
 
 1. `urirun_connectors_toolkit/contract_gate.py` — bundled copy (437L), zsynchronizowany
@@ -100,8 +113,8 @@ Tarcia per język:
 
 ## Roadmap
 
-- Wpiąć `adapters/conformance.py` jako driver bijący w żywy węzeł (Py/Go) — łapie węzeł
-  zgodny u siebie, a kłamiący na drucie
+- ✅ `adapters/conformance.py` — driver bijący w żywy węzeł (Py/Go) łapie węzeł zgodny
+  u siebie, a kłamiący na drucie (`make conformance`, testy `tests/test_conformance.py`)
 - Opublikować `urirun-contract` na PyPI → re-eksport toolkit bez `@git+...` w Dockerfile
 - `contract_jsonschema` → publikować JSON Schema obok kontraktu (walidacja w edytorze)
 - Wersjonowanie additive-only per trasa (lub proto `to_proto`)
