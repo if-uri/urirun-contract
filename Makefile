@@ -1,4 +1,4 @@
-.PHONY: help test contract gen check lint install integration single-source conformance
+.PHONY: help test contract gen gen-js gen-go schema check lint install integration single-source conformance
 PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
 CONTRACTS ?= examples/windowpair/contracts.json
@@ -17,6 +17,15 @@ contract: ## README.md → contracts.json (lokalny LLM, bramkowane)
 
 gen: ## contracts.json → src/handlers_generated.py
 	$(PY) ci/emit_handlers.py
+
+gen-js: ## contracts.json → src/handlers_generated.mjs (szkielet JS)
+	$(PY) ci/emit_handlers.py --lang js $(CONTRACTS)
+
+gen-go: ## contracts.json → src/handlers_generated.go (szkielet Go, gofmt-clean)
+	$(PY) ci/emit_handlers.py --lang go $(CONTRACTS)
+
+schema: ## contracts.json → JSON Schema (draft 2020-12) obok kontraktu
+	$(PY) ci/emit_jsonschema.py $(CONTRACTS)
 
 check: ## wszystkie bramy lokalne (bez LLM, te same co CI)
 	bash ci/pre_commit.sh

@@ -175,6 +175,26 @@ def emit_py_module(contracts: dict, header: str = "") -> str:
     return (header or default_header) + "\n\n".join(blocks) + "\n"
 
 
+def emit_js_module(contracts: dict, header: str = "") -> str:
+    """Generate a complete ESM (.mjs) module with handler stubs for all routes."""
+    default_header = ("// WYGENEROWANE Z contracts.json — NIE EDYTUJ RĘCZNIE. Przegeneruj: `make gen-js`.\n"
+                      "// `ok(fields)` (koperta {ok:true,...}) dostarcza pakiet connectora — zaimportuj go:\n"
+                      "//   import { ok } from './conn.mjs'\n"
+                      "const ok = (fields) => ({ ok: true, ...fields });  // domyślny; nadpisz importem\n\n")
+    blocks = [js_stub(route, c) for route, c in sorted(contracts.items())]
+    return (header or default_header) + "\n\n".join(blocks) + "\n"
+
+
+def emit_go_module(contracts: dict, header: str = "", *, package: str = "handlers") -> str:
+    """Generate a complete, compilable Go module with handler stubs for all routes."""
+    default_header = ("// WYGENEROWANE Z contracts.json — NIE EDYTUJ RĘCZNIE. Przegeneruj: `make gen-go`.\n"
+                      f"package {package}\n\n"
+                      'import "fmt"\n\n'
+                      "var _ = fmt.Errorf // fmt używane w szkieletach poniżej\n\n")
+    blocks = [go_stub(route, c) for route, c in sorted(contracts.items())]
+    return (header or default_header) + "\n\n".join(blocks) + "\n"
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
     if not args or args[0] in ("-h", "--help"):

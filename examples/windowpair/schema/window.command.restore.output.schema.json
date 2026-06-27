@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:urirun:contract:window.command.restore:output",
+  "title": "window/command/restore — output",
+  "x-contractVersion": "v1",
+  "type": "object",
+  "properties": {
+    "action": {
+      "const": "window-restore"
+    },
+    "reversible": {
+      "const": true
+    },
+    "inverse": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "const": "window/command/close"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "path",
+        "args"
+      ]
+    }
+  },
+  "required": [
+    "action",
+    "reversible",
+    "inverse"
+  ]
+}

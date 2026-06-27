@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:urirun:contract:window.command.restore:input",
+  "title": "window/command/restore — input",
+  "x-contractVersion": "v1",
+  "type": "object",
+  "properties": {
+    "snapshot": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "snapshot"
+  ]
+}

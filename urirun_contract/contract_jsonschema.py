@@ -59,3 +59,22 @@ def to_json_schema(dialect: Any) -> dict:
         return {"type": "array", "items": to_json_schema(dialect[0])} if dialect else {"type": "array"}
     tok = dialect[1:] if isinstance(dialect, str) and dialect.startswith("?") else dialect
     return _token_schema(tok) if isinstance(tok, str) else {}
+
+
+_DRAFT = "https://json-schema.org/draft/2020-12/schema"
+
+
+def to_json_schema_document(route: str, dialect: Any, *, kind: str, version: str = "v1") -> dict:
+    """Pełny, samodzielny dokument JSON Schema dla ``inp``/``out`` jednej trasy.
+
+    ``kind`` ∈ {``"input"``, ``"output"``}. Dokłada ``$schema``/``$id``/``title`` + wersję
+    kontraktu, więc plik waliduje payloady w dowolnym edytorze/jezyku bez znajomości dialektu.
+    """
+    slug = route.replace("/", ".")
+    return {
+        "$schema": _DRAFT,
+        "$id": f"urn:urirun:contract:{slug}:{kind}",
+        "title": f"{route} — {kind}",
+        "x-contractVersion": version,
+        **to_json_schema(dialect),
+    }

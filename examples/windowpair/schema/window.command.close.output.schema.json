@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:urirun:contract:window.command.close:output",
+  "title": "window/command/close — output",
+  "x-contractVersion": "v1",
+  "type": "object",
+  "properties": {
+    "action": {
+      "const": "window-close"
+    },
+    "reversible": {
+      "const": true
+    },
+    "snapshot": {
+      "type": "object"
+    },
+    "inverse": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "const": "window/command/restore"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "snapshot": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "snapshot"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "args"
+      ]
+    }
+  },
+  "required": [
+    "action",
+    "reversible",
+    "snapshot",
+    "inverse"
+  ]
+}

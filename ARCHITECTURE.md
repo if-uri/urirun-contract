@@ -121,6 +121,14 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 
 - ✅ `adapters/conformance.py` — driver bijący w żywy węzeł (Py/Go) łapie węzeł zgodny
   u siebie, a kłamiący na drucie (`make conformance`, testy `tests/test_conformance.py`)
+- ✅ Anty-drift kernela — shim toolkit == `__all__` (te same obiekty), `check_single_source`
+  w torze pytest (`tests/test_no_kernel_drift.py`)
+- ✅ JSON Schema obok kontraktu — `ci/emit_jsonschema.py` → `<contract>/schema/*.schema.json`
+  (draft 2020-12, `make schema`); golden corpus waliduje jako wektor testowy
+  (`tests/test_jsonschema_emit.py`)
+- ✅ Polyglot SDK — `emit_js_module`/`emit_go_module` + `ci/emit_handlers.py --lang py|js|go`
+  (`make gen-js`/`gen-go`); JS przechodzi `node --check`, Go kompiluje się i jest gofmt-clean
+  (`tests/test_polyglot_emit.py`)
 - Opublikować `urirun-contract` na PyPI → re-eksport toolkit bez `@git+...` w Dockerfile
-- `contract_jsonschema` → publikować JSON Schema obok kontraktu (walidacja w edytorze)
+- Runtime `enforce` per język (JS/Go) — guard koperty na granicy, nie tylko szkielet
 - Wersjonowanie additive-only per trasa (lub proto `to_proto`)
