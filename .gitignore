@@ -4,6 +4,7 @@ __pycache__/
 .mypy_cache/
 .venv/
 venv/
+.code2llm_cache
 *.egg-info/
 build/
 dist/

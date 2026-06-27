@@ -6,7 +6,7 @@ RUN go build -o service .
 
 FROM scratch
 COPY --from=builder /build/service /service
-COPY contracts.json /contracts.json
+COPY examples/windowpair/contracts.json /contracts.json
 ENV CONTRACTS=/contracts.json PORT=8803
 EXPOSE 8803
 HEALTHCHECK --interval=3s --timeout=2s --retries=10 \

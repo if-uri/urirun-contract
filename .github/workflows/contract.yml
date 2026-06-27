@@ -13,14 +13,17 @@ jobs:
       - name: unit tests (gate + codegen)
         run: python -m pytest tests/ -q
 
+      - name: jedno źródło kernela (gate + codegen bez duplikatów)
+        run: python check_single_source.py .
+
+      - name: toolkit jest re-eksportem (nie kopią)
+        run: python -c "import ast,sys; tree=ast.parse(open('toolkit/contract_gate.py').read()); defs=[n for n in ast.walk(tree) if isinstance(n,(ast.FunctionDef,ast.ClassDef))]; sys.exit(1 if defs else 0)"
+
       - name: windowpair — kontrakt konformuje
         run: python ci/nl_to_contract.py --validate examples/windowpair/contracts.json
 
       - name: windowpair — brak dryfu między kontraktem a wygenerowanym kodem
         run: python ci/regen_check.py examples/windowpair/contracts.json examples/windowpair/src/handlers_generated.py
-
-      - name: toolkit sync — toolkit/contract_gate.py == urirun_contract/gate.py
-        run: diff toolkit/contract_gate.py urirun_contract/gate.py
 
   integration:
     runs-on: ubuntu-latest
@@ -30,17 +33,21 @@ jobs:
         with: { python-version: "3.12" }
       - uses: actions/setup-go@v5
         with: { go-version: "1.22" }
+      - run: pip install -e .
 
       - name: start producer (Python :8801)
-        run: CONTRACTS=contracts.json PORT=8801 python packages/producer/service.py &
+        run: CONTRACTS=examples/windowpair/contracts.json PORT=8801 python packages/producer/service.py &
 
       - name: start consumer Python (:8802)
-        run: CONTRACTS=contracts.json PORT=8802 python packages/consumer/service.py &
+        run: CONTRACTS=examples/windowpair/contracts.json PORT=8802 python packages/consumer/service.py &
 
       - name: build + start consumer Go (:8803)
         run: |
           go build -C packages/consumer-go -o /tmp/consumer-go .
-          CONTRACTS=$PWD/contracts.json PORT=8803 /tmp/consumer-go &
+          CONTRACTS=$PWD/examples/windowpair/contracts.json PORT=8803 /tmp/consumer-go &
 
-      - name: orchestrate — wait_ready + py→py + py→go
-        run: CONTRACTS=contracts.json CONSUMER_GO_URL=http://localhost:8803 python orchestrator/drive.py
+      - name: orchestrate — py→py + py→go
+        run: |
+          CONTRACTS=examples/windowpair/contracts.json \
+          CONSUMER_GO_URL=http://localhost:8803 \
+          python orchestrator/drive.py
