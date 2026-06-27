@@ -1,0 +1,183 @@
+# code2llm | 43f 3079L | python:21,yaml:4,shell:4,yml:3,json:3,toml:1,go:1 | 2026-06-27
+# generated in 0.01s
+# CC̅=4.9 | critical:3/104 | dups:6 | cycles:9
+
+HEALTH[6]:
+  🔴 DUP   6 classes duplicated
+  🔴 CYCLE Circular dependency detected: urirun_contract.gate._walk_oneof -> urirun_contract.gate._walk_out. This indicates high coupling and may lead to infinite recursion or initialization issues.
+  🔴 CYCLE Circular dependency detected: toolkit.contract_gate._walk_out -> toolkit.contract_gate._walk_oneof. This indicates high coupling and may lead to infinite recursion or initialization issues.
+  🟡 CC    checkSchema CC=30 (limit:15)
+  🟡 CC    check CC=15 (limit:15)
+  🟡 CC    check CC=15 (limit:15)
+
+REFACTOR[3]:
+  1. rm duplicates  (-6 dup classes)
+  2. split 3 high-CC methods  (CC>15)
+  3. break 9 circular dependencies
+
+PIPELINES[42]:
+  [1] Src [handleRun]: handleRun → checkSchema → typeOK
+      PURITY: 100% pure
+  [2] Src [main]: main → loadContracts
+      PURITY: 100% pure
+  [3] Src [load]: load
+      PURITY: 100% pure
+  [4] Src [main]: main → wait_ready
+      PURITY: 100% pure
+  [5] Src [close]: close
+      PURITY: 100% pure
+  [6] Src [restore]: restore
+      PURITY: 100% pure
+  [7] Src [main]: main → _load_contracts_json
+      PURITY: 100% pure
+  [8] Src [main]: main → wait_ready
+      PURITY: 100% pure
+  [9] Src [close]: close
+      PURITY: 100% pure
+  [10] Src [restore]: restore
+      PURITY: 100% pure
+  [11] Src [main]: main → validate_doc → check → _leaf_ok
+      PURITY: 100% pure
+  [12] Src [main]: main → validate_doc → check → _leaf_ok
+      PURITY: 100% pure
+  [13] Src [load]: load
+      PURITY: 100% pure
+  [14] Src [js_stub]: js_stub → _inp
+      PURITY: 100% pure
+  [15] Src [go_stub]: go_stub → _inp
+      PURITY: 100% pure
+  [16] Src [emit]: emit → load_contracts
+      PURITY: 100% pure
+  [17] Src [main]: main → _load_contracts_json
+      PURITY: 100% pure
+  [18] Src [validate_output]: validate_output → check → _leaf_ok
+      PURITY: 100% pure
+  [19] Src [conform]: conform → check → _leaf_ok
+      PURITY: 100% pure
+  [20] Src [attach_contracts]: attach_contracts → contract_to_dict
+      PURITY: 100% pure
+  [21] Src [enforce]: enforce → envelope_violation → check → _leaf_ok
+      PURITY: 100% pure
+  [22] Src [check_wire]: check_wire → resolve_out_type → _walk_out → _terminal_type
+      PURITY: 100% pure
+  [23] Src [validate_output]: validate_output → check → _leaf_ok
+      PURITY: 100% pure
+  [24] Src [conform]: conform → check → _leaf_ok
+      PURITY: 100% pure
+  [25] Src [attach_contracts]: attach_contracts → contract_to_dict
+      PURITY: 100% pure
+  [26] Src [enforce]: enforce → envelope_violation → check → _leaf_ok
+      PURITY: 100% pure
+  [27] Src [check_wire]: check_wire → resolve_out_type → _walk_out → _terminal_type
+      PURITY: 100% pure
+  [28] Src [find_wire]: find_wire
+      PURITY: 100% pure
+  [29] Src [wire_payload]: wire_payload → dig
+      PURITY: 100% pure
+  [30] Src [consumer_input_check]: consumer_input_check → check → _leaf_ok
+      PURITY: 100% pure
+  [31] Src [_err]: _err
+      PURITY: 100% pure
+  [32] Src [do_GET]: do_GET
+      PURITY: 100% pure
+  [33] Src [do_POST]: do_POST → restore_handler
+      PURITY: 100% pure
+  [34] Src [do_GET]: do_GET
+      PURITY: 100% pure
+  [35] Src [do_POST]: do_POST → close_handler
+      PURITY: 100% pure
+  [36] Src [main]: main → _find_wire
+      PURITY: 100% pure
+  [37] Src [do_GET]: do_GET
+      PURITY: 100% pure
+  [38] Src [do_POST]: do_POST → close_handler
+      PURITY: 100% pure
+  [39] Src [restore_handler]: restore_handler
+      PURITY: 100% pure
+  [40] Src [_err]: _err
+      PURITY: 100% pure
+  [41] Src [do_GET]: do_GET
+      PURITY: 100% pure
+  [42] Src [do_POST]: do_POST → restore_handler
+      PURITY: 100% pure
+
+LAYERS:
+  toolkit/                        CC̄=6.5    ←in:22  →out:0
+  │ !! contract_gate              437L  3C   19m  CC=15     ←9
+  │ contracts_io                14L  0C    1m  CC=5      ←0
+  │
+  ci/                             CC̄=6.5    ←in:0  →out:6
+  │ nl_to_contract             114L  0C    4m  CC=12     ←0
+  │ regen_check                 51L  0C    1m  CC=6      ←0
+  │ emit_handlers               45L  0C    1m  CC=5      ←0
+  │ pre_commit.sh               16L  0C    0m  CC=0.0    ←0
+  │
+  xlang/                          CC̄=6.2    ←in:0  →out:2
+  │ peer                       132L  0C    4m  CC=13     ←0
+  │
+  urirun_contract/                CC̄=5.5    ←in:4  →out:0
+  │ !! gate                       437L  3C   19m  CC=15     ←0
+  │ codegen                    202L  0C   12m  CC=9      ←2
+  │ __init__                    48L  0C    0m  CC=0.0    ←0
+  │
+  packages/                       CC̄=5.0    ←in:0  →out:0  ×DUP
+  │ !! service.go                 249L  0C    7m  CC=30     ←0
+  │ service                     75L  1C    5m  CC=7      ←1  ×DUP
+  │ service                     68L  1C    4m  CC=4      ←1  ×DUP
+  │ Dockerfile                  14L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  10L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  10L  0C    0m  CC=0.0    ←0
+  │
+  TODO/                           CC̄=2.8    ←in:0  →out:12  !! split  ×DUP
+  │ contracts.json             119L  0C    0m  CC=0.0    ←0
+  │ nl_to_contract             104L  0C    4m  CC=10     ←0
+  │ consumer_service            75L  1C    5m  CC=7      ←0  ×DUP
+  │ orchestrator_drive          72L  0C    3m  CC=3      ←0
+  │ producer_service            68L  1C    4m  CC=4      ←0  ×DUP
+  │ emit_handlers               46L  0C    2m  CC=3      ←0
+  │ docker-compose.yml          21L  0C    0m  CC=0.0    ←0
+  │ handlers_generated          19L  0C    2m  CC=1      ←0
+  │ regen_check                 18L  0C    0m  CC=0.0    ←0
+  │ contracts_io                14L  0C    1m  CC=5      ←0
+  │ Makefile                    14L  0C    0m  CC=0.0    ←0
+  │ contract.yml                12L  0C    0m  CC=0.0    ←0
+  │ .pre-commit-config.yaml     10L  0C    0m  CC=0.0    ←0
+  │ pre_commit.sh               10L  0C    0m  CC=0.0    ←0
+  │ litellm.config.yaml          8L  0C    0m  CC=0.0    ←0
+  │
+  orchestrator/                   CC̄=2.2    ←in:0  →out:5
+  │ drive                       87L  0C    4m  CC=3      ←0
+  │ Dockerfile                   7L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=1.0    ←in:0  →out:0
+  │ contracts.json             119L  0C    0m  CC=0.0    ←0
+  │ handlers_generated          19L  0C    2m  CC=1      ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ contracts.json             119L  0C    0m  CC=0.0    ←0
+  │ project.sh                  69L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          42L  0C    0m  CC=0.0    ←0
+  │ Makefile                    39L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml              24L  0C    0m  CC=0.0    ←0
+  │ .pre-commit-config.yaml     10L  0C    0m  CC=0.0    ←0
+  │ litellm.config.yaml          8L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      4L  0C    0m  CC=0.0    ←0
+  │
+
+COUPLING:
+                               toolkit               TODO                 ci       orchestrator    urirun_contract  packages.consumer  packages.producer              xlang
+            toolkit                 ──                ←10                 ←2                 ←5                                    ←2                 ←1                 ←2  hub
+               TODO                 10                 ──                                                                           1                  1                     !! fan-out
+                 ci                  2                                    ──                                     4                                                         
+       orchestrator                  5                                                       ──                                                                            
+    urirun_contract                                                       ←4                                    ──                                                         
+  packages.consumer                  2                 ←1                                                                          ──                                      
+  packages.producer                  1                 ←1                                                                                             ──                   
+              xlang                  2                                                                                                                                   ──
+  CYCLES: 9
+  HUB: toolkit/ (fan-in=22)
+  SMELL: TODO/ fan-out=12 → split needed
+
+EXTERNAL:
+  validation: run `vallm batch .` → validation.toon
+  duplication: run `redup scan .` → duplication.toon

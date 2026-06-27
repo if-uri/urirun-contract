@@ -1,0 +1,26 @@
+flowchart TD
+%% generated in 0.00s
+
+    %% Entry points (blue)
+    classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
+
+    subgraph Core
+        packages__consumer_go__service__checkSchema{{checkSchema CC=30}}
+        packages__consumer_go__service__handleRun["handleRun"]
+        packages__consumer_go__service__main["main"]
+        toolkit__contracts_io__load["load"]
+        TODO__orchestrator_drive__main["main"]
+        ci__emit_handlers__main["main"]
+        orchestrator__drive___run_pair["_run_pair"]
+        orchestrator__drive__main["main"]
+        TODO__handlers_generated__close["close"]
+        TODO__handlers_generated__restore["restore"]
+        ci__nl_to_contract__main["main"]
+        TODO__nl_to_contract__main["main"]
+        TODO__contracts_io__load["load"]
+        urirun_contract__codegen__js_stub["js_stub"]
+        urirun_contract__codegen__go_stub["go_stub"]
+        ...["+37 more"]
+    end
+
+    class packages__consumer_go__service__handleRun,packages__consumer_go__service__main,toolkit__contracts_io__load,TODO__orchestrator_drive__main,ci__emit_handlers__main,orchestrator__drive__main,TODO__handlers_generated__close,TODO__handlers_generated__restore,ci__nl_to_contract__main,TODO__nl_to_contract__main entry

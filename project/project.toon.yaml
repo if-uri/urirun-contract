@@ -1,0 +1,52 @@
+# urirun-contract | 104 func | 20f | 3079L | python | 2026-06-27
+# generated in 0.00s
+
+HEALTH:
+  CC̄=4.9  critical=18 (limit:10)  dup=4  cycles=9
+
+ALERTS[20]:
+  !!! high_fan_out     main = 32 (limit:10)
+  !!! cc_exceeded      checkSchema = 30 (limit:15)
+  !!  high_fan_out     js_stub = 18 (limit:10)
+  !!  high_fan_out     Handler.do_POST = 15 (limit:10)
+  !!  high_fan_out     Handler.do_POST = 15 (limit:10)
+  !   cc_exceeded      check = 15 (limit:15)
+  !   cc_exceeded      check = 15 (limit:15)
+  !   high_fan_out     py_stub = 14 (limit:10)
+  !   high_fan_out     main = 13 (limit:10)
+  !   high_fan_out     main = 13 (limit:10)
+
+MODULES[43] (top by size):
+  M[toolkit/contract_gate.py] 437L C:3 F:19 CC↑15 D:9 (python)
+  M[urirun_contract/gate.py] 437L C:3 F:19 CC↑15 D:0 (python)
+  M[packages/consumer-go/service.go] 249L C:0 F:7 CC↑30 D:0 (go)
+  M[urirun_contract/codegen.py] 202L C:0 F:12 CC↑9 D:2 (python)
+  M[xlang/peer.py] 132L C:0 F:4 CC↑13 D:0 (python)
+  M[TODO/contracts.json] 119L C:0 F:0 CC↑0 D:0 (json)
+  M[contracts.json] 119L C:0 F:0 CC↑0 D:0 (json)
+  M[examples/windowpair/contracts.json] 119L C:0 F:0 CC↑0 D:0 (json)
+  M[ci/nl_to_contract.py] 114L C:0 F:4 CC↑12 D:0 (python)
+  M[TODO/nl_to_contract.py] 104L C:0 F:4 CC↑10 D:0 (python)
+  M[orchestrator/drive.py] 87L C:0 F:4 CC↑3 D:0 (python)
+  M[TODO/consumer_service.py] 75L C:1 F:5 CC↑7 D:0 (python)
+  M[packages/consumer/service.py] 75L C:1 F:5 CC↑7 D:1 (python)
+  M[TODO/orchestrator_drive.py] 72L C:0 F:3 CC↑3 D:0 (python)
+  M[project.sh] 69L C:0 F:0 CC↑0 D:0 (shell)
+  LANGS: python:21/other:6/yaml:4/shell:4/yml:3/json:3/go:1/toml:1
+
+HOTSPOTS[10]:
+  ★ main fan=32  // Orchestrates 32 calls
+  ★ js_stub fan=18  // Generate a JS handler skeleton.
+  ★ Handler.do_POST fan=15  // Orchestrates 15 calls
+  ★ Handler.do_POST fan=15  // Orchestrates 15 calls
+  ★ py_stub fan=14  // Generate a Python @conn.handler skeleton for one route.
+
+REFACTOR[9]:
+  [1] H/L Split checkSchema (CC=30)
+  [2] M/L Split check (CC=15)
+  [3] M/L Split check (CC=15)
+  [4] M/L Break circular dependency: toolkit.contract_gate.check
+  [5] M/L Break circular dependency: urirun_contract.codegen._py_value
+
+EVOLUTION:
+  2026-06-27 CC̄=4.9 crit=18 3079L // Automated analysis

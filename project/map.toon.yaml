@@ -1,0 +1,215 @@
+# urirun-contract | 43f 3079L | yaml:4,toml:1,yml:3,json:3,shell:4,go:1,python:21 | 2026-06-27
+# generated in 0.00s
+# stats: 104 func | 0 cls | 43 mod | CC̄=4.9 | critical:3 | cycles:0
+# alerts[5]: fan-out main=32; CC checkSchema=30; fan-out js_stub=18; CC check=15; CC check=15
+# hotspots[5]: main fan=32; js_stub fan=18; Handler.do_POST fan=15; Handler.do_POST fan=15; py_stub fan=14
+# evolution: baseline
+# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
+M[43]:
+  .pre-commit-config.yaml,10
+  Makefile,39
+  TODO/.pre-commit-config.yaml,10
+  TODO/Makefile,14
+  TODO/consumer_service.py,75
+  TODO/contract.yml,12
+  TODO/contracts.json,119
+  TODO/contracts_io.py,14
+  TODO/docker-compose.yml,21
+  TODO/emit_handlers.py,46
+  TODO/handlers_generated.py,19
+  TODO/litellm.config.yaml,8
+  TODO/nl_to_contract.py,104
+  TODO/orchestrator_drive.py,72
+  TODO/pre_commit.sh,10
+  TODO/producer_service.py,68
+  TODO/regen_check.py,18
+  ci/emit_handlers.py,45
+  ci/nl_to_contract.py,114
+  ci/pre_commit.sh,16
+  ci/regen_check.py,51
+  contracts.json,119
+  docker-compose.yml,42
+  examples/windowpair/contracts.json,119
+  examples/windowpair/src/handlers_generated.py,19
+  litellm.config.yaml,8
+  orchestrator/Dockerfile,7
+  orchestrator/drive.py,87
+  packages/consumer-go/Dockerfile,14
+  packages/consumer-go/service.go,249
+  packages/consumer/Dockerfile,10
+  packages/consumer/service.py,75
+  packages/producer/Dockerfile,10
+  packages/producer/service.py,68
+  project.sh,69
+  pyproject.toml,24
+  toolkit/contract_gate.py,437
+  toolkit/contracts_io.py,14
+  tree.sh,4
+  urirun_contract/__init__.py,48
+  urirun_contract/codegen.py,202
+  urirun_contract/gate.py,437
+  xlang/peer.py,132
+D:
+  packages/consumer-go/service.go:
+    e: loadContracts,typeOK,checkSchema,restoreHandler,writeJSON,handleRun,main
+    loadContracts()
+    typeOK()
+    checkSchema()
+    restoreHandler()
+    writeJSON()
+    handleRun()
+    main()
+  toolkit/contract_gate.py:
+    e: Contract,Wire,ContractViolation,_parse_const,_leaf_ok,check,validate_output,conform,contract_to_dict,attach_contracts,envelope_violation,enforce,_terminal_type,_walk_oneof,_walk_out,resolve_out_type,assignable,check_wire,find_wire,dig,wire_payload,consumer_input_check
+    Contract:  # One route's canonical contract. The URI path is the stable i...
+    Wire:  # A composition edge: the output of ``producer`` feeds the inp...
+    ContractViolation(AssertionError):  # Handler output diverged from its declared contract...
+    _parse_const(token)
+    _leaf_ok(token;value)
+    check(schema;value;where)
+    validate_output(contract;env)
+    conform(contracts)
+    contract_to_dict(c)
+    attach_contracts(conn;contracts)
+    envelope_violation(contract;envelope)
+    enforce(conn;contracts)
+    _terminal_type(schema)
+    _walk_oneof(schema;segs)
+    _walk_out(schema;segs)
+    resolve_out_type(out_schema;dotted)
+    assignable(producer_tok;consumer_tok)
+    check_wire(wire;contracts)
+    find_wire(wires;producer;consumer)
+    dig(value;dotted)
+    wire_payload(wire;producer_envelope)
+    consumer_input_check(consumer_contract;payload;wire)
+  urirun_contract/gate.py:
+    e: Contract,Wire,ContractViolation,_parse_const,_leaf_ok,check,validate_output,conform,contract_to_dict,attach_contracts,envelope_violation,enforce,_terminal_type,_walk_oneof,_walk_out,resolve_out_type,assignable,check_wire,find_wire,dig,wire_payload,consumer_input_check
+    Contract:  # One route's canonical contract. The URI path is the stable i...
+    Wire:  # A composition edge: the output of ``producer`` feeds the inp...
+    ContractViolation(AssertionError):  # Handler output diverged from its declared contract...
+    _parse_const(token)
+    _leaf_ok(token;value)
+    check(schema;value;where)
+    validate_output(contract;env)
+    conform(contracts)
+    contract_to_dict(c)
+    attach_contracts(conn;contracts)
+    envelope_violation(contract;envelope)
+    enforce(conn;contracts)
+    _terminal_type(schema)
+    _walk_oneof(schema;segs)
+    _walk_out(schema;segs)
+    resolve_out_type(out_schema;dotted)
+    assignable(producer_tok;consumer_tok)
+    check_wire(wire;contracts)
+    find_wire(wires;producer;consumer)
+    dig(value;dotted)
+    wire_payload(wire;producer_envelope)
+    consumer_input_check(consumer_contract;payload;wire)
+  xlang/peer.py:
+    e: _find_wire,_ok_example,handle,main
+    _find_wire(producer;consumer)
+    _ok_example(route)
+    handle(route;payload;lie)
+    main()
+  ci/nl_to_contract.py:
+    e: ask_llm,validate_doc,_mock,main
+    ask_llm(readme;model)
+    validate_doc(doc)
+    _mock(bad;contracts_path)
+    main()
+  TODO/nl_to_contract.py:
+    e: ask_llm,validate_doc,_mock,main
+    ask_llm(readme)
+    validate_doc(doc)
+    _mock(bad)
+    main()
+  urirun_contract/codegen.py:
+    e: _base,_snake,_camel,_const,_inp,_out,_py_value,py_stub,js_stub,go_stub,_load_contracts_json,emit_py_module
+    _base(tok)
+    _snake(route)
+    _camel(route)
+    _const(tok)
+    _inp(c)
+    _out(c)
+    _py_value(schema)
+    py_stub(route;c)
+    js_stub(route;c)
+    go_stub(route;c)
+    _load_contracts_json(path)
+    emit_py_module(contracts;header)
+  packages/consumer/service.py:
+    e: Handler,restore_handler
+    Handler(BaseHTTPRequestHandler): log_message(0),_err(2),do_GET(0),do_POST(0)
+    restore_handler(snapshot)
+  TODO/consumer_service.py:
+    e: Handler,restore_handler
+    Handler(BaseHTTPRequestHandler): log_message(0),_err(2),do_GET(0),do_POST(0)
+    restore_handler(snapshot)
+  ci/regen_check.py:
+    e: main
+    main()
+  toolkit/contracts_io.py:
+    e: load
+    load(path)
+  ci/emit_handlers.py:
+    e: main
+    main()
+  TODO/contracts_io.py:
+    e: load
+    load(path)
+  packages/producer/service.py:
+    e: Handler,close_handler
+    Handler(BaseHTTPRequestHandler): log_message(0),do_GET(0),do_POST(0)
+    close_handler(id)
+  TODO/producer_service.py:
+    e: Handler,close_handler
+    Handler(BaseHTTPRequestHandler): log_message(0),do_GET(0),do_POST(0)
+    close_handler(id)
+  TODO/orchestrator_drive.py:
+    e: post,wait_ready,main
+    post(url;payload)
+    wait_ready(url;tries)
+    main()
+  orchestrator/drive.py:
+    e: post,wait_ready,_run_pair,main
+    post(url;payload)
+    wait_ready(url;tries)
+    _run_pair(label;producer_url;consumer_url)
+    main()
+  TODO/emit_handlers.py:
+    e: load_contracts,emit
+    load_contracts(path)
+    emit(contracts_path)
+  examples/windowpair/src/handlers_generated.py:
+    e: close,restore
+    close(id)
+    restore(snapshot)
+  TODO/handlers_generated.py:
+    e: close,restore
+    close(id)
+    restore(snapshot)
+  litellm.config.yaml:
+  Makefile:
+  .pre-commit-config.yaml:
+  pyproject.toml:
+  docker-compose.yml:
+  contracts.json:
+  tree.sh:
+  project.sh:
+  packages/consumer/Dockerfile:
+  packages/producer/Dockerfile:
+  TODO/contract.yml:
+  packages/consumer-go/Dockerfile:
+  TODO/litellm.config.yaml:
+  TODO/Makefile:
+  TODO/contracts.json:
+  examples/windowpair/contracts.json:
+  TODO/docker-compose.yml:
+  TODO/.pre-commit-config.yaml:
+  TODO/pre_commit.sh:
+  ci/pre_commit.sh:
+  orchestrator/Dockerfile:
+  urirun_contract/__init__.py:
+  TODO/regen_check.py:

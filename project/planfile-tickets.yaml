@@ -1,0 +1,1082 @@
+source: code2llm
+# generated in 0.03s
+schema: code2llm.planfile_tickets.v1
+project_root: /home/tom/github/if-uri/urirun-contract
+tickets:
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: packages.consumer-go.service.checkSchema (CC=30)'
+  description: 'code2llm reports `packages.consumer-go.service.checkSchema` at `packages/consumer-go/service.go:79`
+    with cyclomatic complexity 30 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - packages/consumer-go/service.go
+  dedupe_key: code2llm:cc:packages/consumer-go/service.go:packages.consumer-go.service.checkSchema
+- signal: code2llm_dup
+  title: Consolidate duplicate class Handler
+  description: 'code2llm found similar `Handler` classes in `packages/consumer/service.py`
+    and `packages/producer/service.py` with 3 overlapping methods.
+
+
+    Extract a shared base/helper or merge the duplicated behavior, then re-run code2llm
+    to confirm the duplicate signal is gone.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - duplication
+  - refactor
+  files:
+  - packages/consumer/service.py
+  - packages/producer/service.py
+  dedupe_key: code2llm:dup:Handler:packages/consumer/service.py:packages/producer/service.py
+- signal: code2llm_dup
+  title: Consolidate duplicate class Handler
+  description: 'code2llm found similar `Handler` classes in `packages/consumer/service.py`
+    and `TODO/producer_service.py` with 3 overlapping methods.
+
+
+    Extract a shared base/helper or merge the duplicated behavior, then re-run code2llm
+    to confirm the duplicate signal is gone.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - duplication
+  - refactor
+  files:
+  - packages/consumer/service.py
+  - TODO/producer_service.py
+  dedupe_key: code2llm:dup:Handler:packages/consumer/service.py:TODO/producer_service.py
+- signal: code2llm_dup
+  title: Consolidate duplicate class Handler
+  description: 'code2llm found similar `Handler` classes in `packages/consumer/service.py`
+    and `TODO/consumer_service.py` with 4 overlapping methods.
+
+
+    Extract a shared base/helper or merge the duplicated behavior, then re-run code2llm
+    to confirm the duplicate signal is gone.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - duplication
+  - refactor
+  files:
+  - packages/consumer/service.py
+  - TODO/consumer_service.py
+  dedupe_key: code2llm:dup:Handler:packages/consumer/service.py:TODO/consumer_service.py
+- signal: code2llm_dup
+  title: Consolidate duplicate class Handler
+  description: 'code2llm found similar `Handler` classes in `packages/producer/service.py`
+    and `TODO/producer_service.py` with 3 overlapping methods.
+
+
+    Extract a shared base/helper or merge the duplicated behavior, then re-run code2llm
+    to confirm the duplicate signal is gone.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - duplication
+  - refactor
+  files:
+  - packages/producer/service.py
+  - TODO/producer_service.py
+  dedupe_key: code2llm:dup:Handler:packages/producer/service.py:TODO/producer_service.py
+- signal: code2llm_dup
+  title: Consolidate duplicate class Handler
+  description: 'code2llm found similar `Handler` classes in `packages/producer/service.py`
+    and `TODO/consumer_service.py` with 3 overlapping methods.
+
+
+    Extract a shared base/helper or merge the duplicated behavior, then re-run code2llm
+    to confirm the duplicate signal is gone.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - duplication
+  - refactor
+  files:
+  - packages/producer/service.py
+  - TODO/consumer_service.py
+  dedupe_key: code2llm:dup:Handler:packages/producer/service.py:TODO/consumer_service.py
+- signal: code2llm_dup
+  title: Consolidate duplicate class Handler
+  description: 'code2llm found similar `Handler` classes in `TODO/producer_service.py`
+    and `TODO/consumer_service.py` with 3 overlapping methods.
+
+
+    Extract a shared base/helper or merge the duplicated behavior, then re-run code2llm
+    to confirm the duplicate signal is gone.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - duplication
+  - refactor
+  files:
+  - TODO/producer_service.py
+  - TODO/consumer_service.py
+  dedupe_key: code2llm:dup:Handler:TODO/producer_service.py:TODO/consumer_service.py
+- signal: code2llm_smell_circular_dependency
+  title: 'Address code smell: Circular Dependency: toolkit.contract_gate._walk_out
+    -> toolkit.contract_gate._walk_oneof'
+  description: 'code2llm reports `Circular Dependency: toolkit.contract_gate._walk_out
+    -> toolkit.contract_gate._walk_oneof` in `toolkit/contract_gate.py:303`.
+
+
+    Circular dependency detected: toolkit.contract_gate._walk_out -> toolkit.contract_gate._walk_oneof.
+    This indicates high coupling and may lead to infinite recursion or initialization
+    issues.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - circular-dependency
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:circular_dependency:toolkit/contract_gate.py:303:Circular
+    Dependency: toolkit.contract_gate._walk_out -> toolkit.contract_gate._walk_oneof'
+- signal: code2llm_smell_circular_dependency
+  title: 'Address code smell: Circular Dependency: urirun_contract.gate._walk_oneof
+    -> urirun_contract.gate._walk_out'
+  description: 'code2llm reports `Circular Dependency: urirun_contract.gate._walk_oneof
+    -> urirun_contract.gate._walk_out` in `urirun_contract/gate.py:289`.
+
+
+    Circular dependency detected: urirun_contract.gate._walk_oneof -> urirun_contract.gate._walk_out.
+    This indicates high coupling and may lead to infinite recursion or initialization
+    issues.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - circular-dependency
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:circular_dependency:urirun_contract/gate.py:289:Circular
+    Dependency: urirun_contract.gate._walk_oneof -> urirun_contract.gate._walk_out'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `xlang/peer.py:58`.
+
+
+    Function ''main'' is oversized: CC=13, fan-out=32, mutations=23.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - xlang/peer.py
+  dedupe_key: 'code2llm:smell:god_function:xlang/peer.py:58:God Function: main'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: C'
+  description: 'code2llm reports `Shotgun Surgery: C` in `ci/nl_to_contract.py:43`.
+
+
+    Mutation of variable ''C'' spans 6 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - ci/nl_to_contract.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:ci/nl_to_contract.py:43:Shotgun Surgery:
+    C'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: args'
+  description: 'code2llm reports `Shotgun Surgery: args` in `toolkit/contract_gate.py:145`.
+
+
+    Mutation of variable ''args'' spans 5 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:toolkit/contract_gate.py:145:Shotgun
+    Surgery: args'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: body'
+  description: 'code2llm reports `Shotgun Surgery: body` in `urirun_contract/codegen.py:112`.
+
+
+    Mutation of variable ''body'' spans 6 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - urirun_contract/codegen.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:urirun_contract/codegen.py:112:Shotgun
+    Surgery: body'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: contracts'
+  description: 'code2llm reports `Shotgun Surgery: contracts` in `TODO/contracts_io.py:8`.
+
+
+    Mutation of variable ''contracts'' spans 6 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - TODO/contracts_io.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:TODO/contracts_io.py:8:Shotgun Surgery:
+    contracts'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: doc'
+  description: 'code2llm reports `Shotgun Surgery: doc` in `TODO/contracts_io.py:8`.
+
+
+    Mutation of variable ''doc'' spans 8 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - TODO/contracts_io.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:TODO/contracts_io.py:8:Shotgun Surgery:
+    doc'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: env'
+  description: 'code2llm reports `Shotgun Surgery: env` in `xlang/peer.py:46`.
+
+
+    Mutation of variable ''env'' spans 7 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - xlang/peer.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:xlang/peer.py:46:Shotgun Surgery: env'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: inv'
+  description: 'code2llm reports `Shotgun Surgery: inv` in `ci/nl_to_contract.py:43`.
+
+
+    Mutation of variable ''inv'' spans 5 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - ci/nl_to_contract.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:ci/nl_to_contract.py:43:Shotgun Surgery:
+    inv'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: opt'
+  description: 'code2llm reports `Shotgun Surgery: opt` in `urirun_contract/gate.py:405`.
+
+
+    Mutation of variable ''opt'' spans 6 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:urirun_contract/gate.py:405:Shotgun
+    Surgery: opt'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: out'
+  description: 'code2llm reports `Shotgun Surgery: out` in `urirun_contract/gate.py:391`.
+
+
+    Mutation of variable ''out'' spans 8 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:urirun_contract/gate.py:391:Shotgun
+    Surgery: out'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: payload'
+  description: 'code2llm reports `Shotgun Surgery: payload` in `xlang/peer.py:58`.
+
+
+    Mutation of variable ''payload'' spans 7 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - xlang/peer.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:xlang/peer.py:58:Shotgun Surgery: payload'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: problems'
+  description: 'code2llm reports `Shotgun Surgery: problems` in `ci/nl_to_contract.py:43`.
+
+
+    Mutation of variable ''problems'' spans 11 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - ci/nl_to_contract.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:ci/nl_to_contract.py:43:Shotgun Surgery:
+    problems'
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: toolkit.contract_gate.check (CC=15)'
+  description: 'code2llm reports `toolkit.contract_gate.check` at `toolkit/contract_gate.py:108`
+    with cyclomatic complexity 15 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: code2llm:cc:toolkit/contract_gate.py:toolkit.contract_gate.check
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: urirun_contract.gate.check (CC=15)'
+  description: 'code2llm reports `urirun_contract.gate.check` at `urirun_contract/gate.py:108`
+    with cyclomatic complexity 15 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: code2llm:cc:urirun_contract/gate.py:urirun_contract.gate.check
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: msg, code, self'
+  description: 'code2llm reports `Data Clump: msg, code, self` in `packages/consumer/service.py:38`.
+
+
+    Arguments (msg, code, self) are used together in multiple functions: packages.consumer.service.Handler._err,
+    TODO.consumer_service.Handler._err.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - packages/consumer/service.py
+  dedupe_key: 'code2llm:smell:data_clump:packages/consumer/service.py:38:Data Clump:
+    msg, code, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: msg, code, self'
+  description: 'code2llm reports `Data Clump: msg, code, self` in `TODO/consumer_service.py:38`.
+
+
+    Arguments (msg, code, self) are used together in multiple functions: packages.consumer.service.Handler._err,
+    TODO.consumer_service.Handler._err.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - TODO/consumer_service.py
+  dedupe_key: 'code2llm:smell:data_clump:TODO/consumer_service.py:38:Data Clump: msg,
+    code, self'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: schema, value, where'
+  description: 'code2llm reports `Data Clump: schema, value, where` in `toolkit/contract_gate.py:108`.
+
+
+    Arguments (schema, value, where) are used together in multiple functions: toolkit.contract_gate.check,
+    urirun_contract.gate.check.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:data_clump:toolkit/contract_gate.py:108:Data Clump:
+    schema, value, where'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: schema, value, where'
+  description: 'code2llm reports `Data Clump: schema, value, where` in `urirun_contract/gate.py:108`.
+
+
+    Arguments (schema, value, where) are used together in multiple functions: toolkit.contract_gate.check,
+    urirun_contract.gate.check.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:data_clump:urirun_contract/gate.py:108:Data Clump: schema,
+    value, where'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: wire, payload, consumer_contract'
+  description: 'code2llm reports `Data Clump: wire, payload, consumer_contract` in
+    `toolkit/contract_gate.py:405`.
+
+
+    Arguments (wire, payload, consumer_contract) are used together in multiple functions:
+    toolkit.contract_gate.consumer_input_check, urirun_contract.gate.consumer_input_check.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:data_clump:toolkit/contract_gate.py:405:Data Clump:
+    wire, payload, consumer_contract'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: wire, payload, consumer_contract'
+  description: 'code2llm reports `Data Clump: wire, payload, consumer_contract` in
+    `urirun_contract/gate.py:405`.
+
+
+    Arguments (wire, payload, consumer_contract) are used together in multiple functions:
+    toolkit.contract_gate.consumer_input_check, urirun_contract.gate.consumer_input_check.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:data_clump:urirun_contract/gate.py:405:Data Clump: wire,
+    payload, consumer_contract'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: wires, consumer, producer'
+  description: 'code2llm reports `Data Clump: wires, consumer, producer` in `toolkit/contract_gate.py:370`.
+
+
+    Arguments (wires, consumer, producer) are used together in multiple functions:
+    toolkit.contract_gate.find_wire, urirun_contract.gate.find_wire.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:data_clump:toolkit/contract_gate.py:370:Data Clump:
+    wires, consumer, producer'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: wires, consumer, producer'
+  description: 'code2llm reports `Data Clump: wires, consumer, producer` in `urirun_contract/gate.py:370`.
+
+
+    Arguments (wires, consumer, producer) are used together in multiple functions:
+    toolkit.contract_gate.find_wire, urirun_contract.gate.find_wire.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:data_clump:urirun_contract/gate.py:370:Data Clump: wires,
+    consumer, producer'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _py_value'
+  description: 'code2llm reports `God Function: _py_value` in `urirun_contract/codegen.py:69`.
+
+
+    Function ''_py_value'' is oversized: CC=9, fan-out=12, mutations=3.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/codegen.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/codegen.py:69:God Function:
+    _py_value'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _run_pair'
+  description: 'code2llm reports `God Function: _run_pair` in `orchestrator/drive.py:47`.
+
+
+    Function ''_run_pair'' is oversized: CC=2, fan-out=6, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - orchestrator/drive.py
+  dedupe_key: 'code2llm:smell:god_function:orchestrator/drive.py:47:God Function:
+    _run_pair'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _walk_out'
+  description: 'code2llm reports `God Function: _walk_out` in `toolkit/contract_gate.py:303`.
+
+
+    Function ''_walk_out'' is oversized: CC=12, fan-out=8, mutations=14.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:god_function:toolkit/contract_gate.py:303:God Function:
+    _walk_out'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _walk_out'
+  description: 'code2llm reports `God Function: _walk_out` in `urirun_contract/gate.py:303`.
+
+
+    Function ''_walk_out'' is oversized: CC=12, fan-out=8, mutations=14.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/gate.py:303:God Function:
+    _walk_out'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: check_wire'
+  description: 'code2llm reports `God Function: check_wire` in `toolkit/contract_gate.py:337`.
+
+
+    Function ''check_wire'' is oversized: CC=10, fan-out=7, mutations=16.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:god_function:toolkit/contract_gate.py:337:God Function:
+    check_wire'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: check_wire'
+  description: 'code2llm reports `God Function: check_wire` in `urirun_contract/gate.py:337`.
+
+
+    Function ''check_wire'' is oversized: CC=10, fan-out=7, mutations=16.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/gate.py:337:God Function:
+    check_wire'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: conform'
+  description: 'code2llm reports `God Function: conform` in `toolkit/contract_gate.py:145`.
+
+
+    Function ''conform'' is oversized: CC=13, fan-out=5, mutations=2.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:god_function:toolkit/contract_gate.py:145:God Function:
+    conform'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: conform'
+  description: 'code2llm reports `God Function: conform` in `urirun_contract/gate.py:145`.
+
+
+    Function ''conform'' is oversized: CC=13, fan-out=5, mutations=2.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/gate.py:145:God Function:
+    conform'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: consumer_input_check'
+  description: 'code2llm reports `God Function: consumer_input_check` in `toolkit/contract_gate.py:405`.
+
+
+    Function ''consumer_input_check'' is oversized: CC=13, fan-out=10, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:god_function:toolkit/contract_gate.py:405:God Function:
+    consumer_input_check'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: consumer_input_check'
+  description: 'code2llm reports `God Function: consumer_input_check` in `urirun_contract/gate.py:405`.
+
+
+    Function ''consumer_input_check'' is oversized: CC=13, fan-out=10, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/gate.py:405:God Function:
+    consumer_input_check'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: do_POST'
+  description: 'code2llm reports `God Function: do_POST` in `packages/consumer/service.py:50`.
+
+
+    Function ''do_POST'' is oversized: CC=7, fan-out=15, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - packages/consumer/service.py
+  dedupe_key: 'code2llm:smell:god_function:packages/consumer/service.py:50:God Function:
+    do_POST'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: do_POST'
+  description: 'code2llm reports `God Function: do_POST` in `packages/producer/service.py:46`.
+
+
+    Function ''do_POST'' is oversized: CC=4, fan-out=13, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - packages/producer/service.py
+  dedupe_key: 'code2llm:smell:god_function:packages/producer/service.py:46:God Function:
+    do_POST'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: do_POST'
+  description: 'code2llm reports `God Function: do_POST` in `TODO/producer_service.py:46`.
+
+
+    Function ''do_POST'' is oversized: CC=4, fan-out=13, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - TODO/producer_service.py
+  dedupe_key: 'code2llm:smell:god_function:TODO/producer_service.py:46:God Function:
+    do_POST'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: do_POST'
+  description: 'code2llm reports `God Function: do_POST` in `TODO/consumer_service.py:50`.
+
+
+    Function ''do_POST'' is oversized: CC=7, fan-out=15, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - TODO/consumer_service.py
+  dedupe_key: 'code2llm:smell:god_function:TODO/consumer_service.py:50:God Function:
+    do_POST'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: enforce'
+  description: 'code2llm reports `God Function: enforce` in `toolkit/contract_gate.py:226`.
+
+
+    Function ''enforce'' is oversized: CC=1, fan-out=11, mutations=2.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - toolkit/contract_gate.py
+  dedupe_key: 'code2llm:smell:god_function:toolkit/contract_gate.py:226:God Function:
+    enforce'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: enforce'
+  description: 'code2llm reports `God Function: enforce` in `urirun_contract/gate.py:226`.
+
+
+    Function ''enforce'' is oversized: CC=1, fan-out=11, mutations=2.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/gate.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/gate.py:226:God Function:
+    enforce'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: go_stub'
+  description: 'code2llm reports `God Function: go_stub` in `urirun_contract/codegen.py:140`.
+
+
+    Function ''go_stub'' is oversized: CC=3, fan-out=11, mutations=4.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/codegen.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/codegen.py:140:God Function:
+    go_stub'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: js_stub'
+  description: 'code2llm reports `God Function: js_stub` in `urirun_contract/codegen.py:112`.
+
+
+    Function ''js_stub'' is oversized: CC=5, fan-out=18, mutations=6.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/codegen.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/codegen.py:112:God Function:
+    js_stub'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `TODO/orchestrator_drive.py:46`.
+
+
+    Function ''main'' is oversized: CC=2, fan-out=7, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - TODO/orchestrator_drive.py
+  dedupe_key: 'code2llm:smell:god_function:TODO/orchestrator_drive.py:46:God Function:
+    main'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `ci/emit_handlers.py:24`.
+
+
+    Function ''main'' is oversized: CC=5, fan-out=13, mutations=4.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - ci/emit_handlers.py
+  dedupe_key: 'code2llm:smell:god_function:ci/emit_handlers.py:24:God Function: main'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `ci/nl_to_contract.py:79`.
+
+
+    Function ''main'' is oversized: CC=12, fan-out=13, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - ci/nl_to_contract.py
+  dedupe_key: 'code2llm:smell:god_function:ci/nl_to_contract.py:79:God Function: main'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: main'
+  description: 'code2llm reports `God Function: main` in `TODO/nl_to_contract.py:75`.
+
+
+    Function ''main'' is oversized: CC=9, fan-out=12, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - TODO/nl_to_contract.py
+  dedupe_key: 'code2llm:smell:god_function:TODO/nl_to_contract.py:75:God Function:
+    main'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: py_stub'
+  description: 'code2llm reports `God Function: py_stub` in `urirun_contract/codegen.py:86`.
+
+
+    Function ''py_stub'' is oversized: CC=7, fan-out=14, mutations=14.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - urirun_contract/codegen.py
+  dedupe_key: 'code2llm:smell:god_function:urirun_contract/codegen.py:86:God Function:
+    py_stub'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: validate_doc'
+  description: 'code2llm reports `God Function: validate_doc` in `ci/nl_to_contract.py:43`.
+
+
+    Function ''validate_doc'' is oversized: CC=10, fan-out=9, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - ci/nl_to_contract.py
+  dedupe_key: 'code2llm:smell:god_function:ci/nl_to_contract.py:43:God Function: validate_doc'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: validate_doc'
+  description: 'code2llm reports `God Function: validate_doc` in `TODO/nl_to_contract.py:41`.
+
+
+    Function ''validate_doc'' is oversized: CC=10, fan-out=8, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - TODO/nl_to_contract.py
+  dedupe_key: 'code2llm:smell:god_function:TODO/nl_to_contract.py:41:God Function:
+    validate_doc'
+applied: []
+skipped: []

@@ -1,0 +1,178 @@
+# code2llm call graph | /home/tom/github/if-uri/urirun-contract
+# generated in 0.03s
+# nodes: 78 | edges: 77 | modules: 16
+# CC̄=4.9
+
+HUBS[20]:
+  xlang.peer.main
+    CC=13  in:0  out:52  total:52
+  toolkit.contract_gate.check
+    CC=15  in:24  out:19  total:43
+  urirun_contract.gate.check
+    CC=15  in:10  out:19  total:29
+  urirun_contract.codegen.js_stub
+    CC=5  in:0  out:26  total:26
+  ci.nl_to_contract.main
+    CC=12  in:0  out:24  total:24
+  ci.nl_to_contract.validate_doc
+    CC=10  in:1  out:23  total:24
+  toolkit.contract_gate.consumer_input_check
+    CC=13  in:3  out:18  total:21
+  urirun_contract.codegen._py_value
+    CC=9  in:3  out:17  total:20
+  TODO.nl_to_contract.validate_doc
+    CC=10  in:1  out:19  total:20
+  packages.producer.service.Handler.do_POST
+    CC=4  in:0  out:19  total:19
+  TODO.nl_to_contract.main
+    CC=9  in:0  out:19  total:19
+  TODO.producer_service.Handler.do_POST
+    CC=4  in:0  out:19  total:19
+  packages.consumer.service.Handler.do_POST
+    CC=7  in:0  out:18  total:18
+  urirun_contract.gate.consumer_input_check
+    CC=13  in:0  out:18  total:18
+  urirun_contract.codegen.py_stub
+    CC=7  in:1  out:17  total:18
+  TODO.consumer_service.Handler.do_POST
+    CC=7  in:0  out:18  total:18
+  urirun_contract.gate._leaf_ok
+    CC=7  in:2  out:15  total:17
+  toolkit.contract_gate._walk_out
+    CC=12  in:4  out:13  total:17
+  urirun_contract.gate._walk_out
+    CC=12  in:4  out:13  total:17
+  toolkit.contract_gate._leaf_ok
+    CC=7  in:2  out:15  total:17
+
+MODULES:
+  TODO.consumer_service  [1 funcs]
+    do_POST  CC=7  out:18
+  TODO.emit_handlers  [2 funcs]
+    emit  CC=2  out:4
+    load_contracts  CC=3  out:5
+  TODO.nl_to_contract  [2 funcs]
+    main  CC=9  out:19
+    validate_doc  CC=10  out:19
+  TODO.orchestrator_drive  [3 funcs]
+    main  CC=2  out:14
+    post  CC=1  out:6
+    wait_ready  CC=3  out:4
+  TODO.producer_service  [1 funcs]
+    do_POST  CC=4  out:19
+  ci.emit_handlers  [1 funcs]
+    main  CC=5  out:16
+  ci.nl_to_contract  [2 funcs]
+    main  CC=12  out:24
+    validate_doc  CC=10  out:23
+  ci.regen_check  [1 funcs]
+    main  CC=6  out:15
+  orchestrator.drive  [4 funcs]
+    _run_pair  CC=2  out:11
+    main  CC=3  out:6
+    post  CC=1  out:6
+    wait_ready  CC=3  out:4
+  packages.consumer-go.service  [7 funcs]
+    checkSchema  CC=30  out:8
+    handleRun  CC=8  out:6
+    loadContracts  CC=6  out:9
+    main  CC=4  out:10
+    restoreHandler  CC=3  out:2
+    typeOK  CC=10  out:1
+    writeJSON  CC=1  out:5
+  packages.consumer.service  [2 funcs]
+    do_POST  CC=7  out:18
+    restore_handler  CC=1  out:2
+  packages.producer.service  [2 funcs]
+    do_POST  CC=4  out:19
+    close_handler  CC=1  out:0
+  toolkit.contract_gate  [18 funcs]
+    _leaf_ok  CC=7  out:15
+    _parse_const  CC=4  out:3
+    _terminal_type  CC=5  out:4
+    _walk_oneof  CC=9  out:5
+    _walk_out  CC=12  out:13
+    assignable  CC=4  out:0
+    attach_contracts  CC=5  out:7
+    check  CC=15  out:19
+    check_wire  CC=10  out:11
+    conform  CC=13  out:10
+  urirun_contract.codegen  [11 funcs]
+    _base  CC=3  out:2
+    _camel  CC=2  out:5
+    _const  CC=3  out:1
+    _inp  CC=2  out:1
+    _load_contracts_json  CC=3  out:6
+    _out  CC=2  out:1
+    _py_value  CC=9  out:17
+    emit_py_module  CC=3  out:4
+    go_stub  CC=3  out:11
+    js_stub  CC=5  out:26
+  urirun_contract.gate  [17 funcs]
+    _leaf_ok  CC=7  out:15
+    _parse_const  CC=4  out:3
+    _terminal_type  CC=5  out:4
+    _walk_oneof  CC=9  out:5
+    _walk_out  CC=12  out:13
+    assignable  CC=4  out:0
+    attach_contracts  CC=5  out:7
+    check  CC=15  out:19
+    check_wire  CC=10  out:11
+    conform  CC=13  out:10
+  xlang.peer  [4 funcs]
+    _find_wire  CC=4  out:1
+    _ok_example  CC=3  out:2
+    handle  CC=5  out:5
+    main  CC=13  out:52
+
+EDGES:
+  packages.consumer-go.service.checkSchema → packages.consumer-go.service.typeOK
+  packages.consumer-go.service.handleRun → packages.consumer-go.service.checkSchema
+  packages.consumer-go.service.handleRun → packages.consumer-go.service.writeJSON
+  packages.consumer-go.service.handleRun → packages.consumer-go.service.restoreHandler
+  packages.consumer-go.service.main → packages.consumer-go.service.loadContracts
+  packages.consumer-go.service.main → packages.consumer-go.service.writeJSON
+  TODO.orchestrator_drive.main → TODO.orchestrator_drive.wait_ready
+  TODO.orchestrator_drive.main → TODO.orchestrator_drive.post
+  TODO.orchestrator_drive.main → toolkit.contract_gate.check
+  TODO.orchestrator_drive.main → toolkit.contract_gate.find_wire
+  TODO.orchestrator_drive.main → toolkit.contract_gate.wire_payload
+  TODO.orchestrator_drive.main → toolkit.contract_gate.consumer_input_check
+  ci.emit_handlers.main → urirun_contract.codegen._load_contracts_json
+  ci.emit_handlers.main → urirun_contract.codegen.emit_py_module
+  orchestrator.drive._run_pair → orchestrator.drive.post
+  orchestrator.drive._run_pair → toolkit.contract_gate.check
+  orchestrator.drive._run_pair → toolkit.contract_gate.find_wire
+  orchestrator.drive._run_pair → toolkit.contract_gate.wire_payload
+  orchestrator.drive._run_pair → toolkit.contract_gate.consumer_input_check
+  orchestrator.drive.main → orchestrator.drive.wait_ready
+  orchestrator.drive.main → orchestrator.drive._run_pair
+  ci.nl_to_contract.main → ci.nl_to_contract.validate_doc
+  TODO.nl_to_contract.main → TODO.nl_to_contract.validate_doc
+  urirun_contract.codegen._py_value → urirun_contract.codegen._base
+  urirun_contract.codegen._py_value → urirun_contract.codegen._const
+  urirun_contract.codegen.py_stub → urirun_contract.codegen._out
+  urirun_contract.codegen.py_stub → urirun_contract.codegen._inp
+  urirun_contract.codegen.js_stub → urirun_contract.codegen._inp
+  urirun_contract.codegen.js_stub → urirun_contract.codegen._out
+  urirun_contract.codegen.js_stub → urirun_contract.codegen._base
+  urirun_contract.codegen.go_stub → urirun_contract.codegen._inp
+  urirun_contract.codegen.go_stub → urirun_contract.codegen._base
+  urirun_contract.codegen.go_stub → urirun_contract.codegen._camel
+  urirun_contract.codegen.emit_py_module → urirun_contract.codegen.py_stub
+  TODO.emit_handlers.emit → TODO.emit_handlers.load_contracts
+  ci.regen_check.main → urirun_contract.codegen._load_contracts_json
+  ci.regen_check.main → urirun_contract.codegen.emit_py_module
+  toolkit.contract_gate._leaf_ok → toolkit.contract_gate._parse_const
+  toolkit.contract_gate.check → toolkit.contract_gate._leaf_ok
+  toolkit.contract_gate.validate_output → toolkit.contract_gate.check
+  toolkit.contract_gate.conform → toolkit.contract_gate.check
+  toolkit.contract_gate.attach_contracts → toolkit.contract_gate.contract_to_dict
+  toolkit.contract_gate.envelope_violation → toolkit.contract_gate.check
+  toolkit.contract_gate._walk_oneof → toolkit.contract_gate._walk_out
+  toolkit.contract_gate._walk_out → toolkit.contract_gate._terminal_type
+  toolkit.contract_gate._walk_out → toolkit.contract_gate._walk_oneof
+  toolkit.contract_gate.resolve_out_type → toolkit.contract_gate._walk_out
+  toolkit.contract_gate.check_wire → toolkit.contract_gate.resolve_out_type
+  toolkit.contract_gate.check_wire → toolkit.contract_gate.assignable
+  toolkit.contract_gate.wire_payload → toolkit.contract_gate.dig

@@ -1,0 +1,28 @@
+flowchart TD
+%% generated in 0.00s
+    TODO__consumer_service["TODO.consumer_service<br/>5 funcs"]
+    TODO__nl_to_contract["TODO.nl_to_contract<br/>4 funcs"]
+    TODO__orchestrator_drive["TODO.orchestrator_drive<br/>3 funcs"]
+    TODO__producer_service["TODO.producer_service<br/>4 funcs"]
+    ci__emit_handlers["ci.emit_handlers<br/>1 funcs"]
+    ci__nl_to_contract["ci.nl_to_contract<br/>4 funcs"]
+    ci__regen_check["ci.regen_check<br/>1 funcs"]
+    orchestrator__drive["orchestrator.drive<br/>4 funcs"]
+    packages__consumer["packages.consumer<br/>5 funcs"]
+    packages__producer["packages.producer<br/>4 funcs"]
+    toolkit__contract_gate["toolkit.contract_gate<br/>19 funcs"]
+    urirun_contract__codegen["urirun_contract.codegen<br/>12 funcs"]
+    xlang__peer["xlang.peer<br/>4 funcs"]
+    TODO__orchestrator_drive ==>|5| toolkit__contract_gate
+    orchestrator__drive ==>|5| toolkit__contract_gate
+    ci__emit_handlers -->|2| urirun_contract__codegen
+    ci__nl_to_contract -->|2| toolkit__contract_gate
+    TODO__nl_to_contract -->|2| toolkit__contract_gate
+    ci__regen_check -->|2| urirun_contract__codegen
+    packages__consumer -->|2| toolkit__contract_gate
+    xlang__peer -->|2| toolkit__contract_gate
+    TODO__consumer_service -->|2| toolkit__contract_gate
+    packages__producer -->|1| toolkit__contract_gate
+    TODO__producer_service -->|1| packages__producer
+    TODO__producer_service -->|1| toolkit__contract_gate
+    TODO__consumer_service -->|1| packages__consumer

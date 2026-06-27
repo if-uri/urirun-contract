@@ -1,0 +1,240 @@
+flowchart TD
+%% generated in 0.00s
+    subgraph TODO__consumer_service
+        TODO__consumer_service__restore_handler["restore_handler"]
+        TODO__consumer_service__Handler__log_message["log_message"]
+        TODO__consumer_service__Handler___err["_err"]
+        TODO__consumer_service__Handler__do_GET["do_GET"]
+        TODO__consumer_service__Handler__do_POST["do_POST"]
+    end
+    subgraph TODO__contracts_io
+        TODO__contracts_io__load["load"]
+    end
+    subgraph TODO__emit_handlers
+        TODO__emit_handlers__load_contracts["load_contracts"]
+        TODO__emit_handlers__emit["emit"]
+    end
+    subgraph TODO__handlers_generated
+        TODO__handlers_generated__close["close"]
+        TODO__handlers_generated__restore["restore"]
+    end
+    subgraph TODO__nl_to_contract
+        TODO__nl_to_contract__ask_llm["ask_llm"]
+        TODO__nl_to_contract__validate_doc("validate_doc CC=10")
+        TODO__nl_to_contract___mock["_mock"]
+        TODO__nl_to_contract__main("main CC=9")
+    end
+    subgraph TODO__orchestrator_drive
+        TODO__orchestrator_drive__post["post"]
+        TODO__orchestrator_drive__wait_ready["wait_ready"]
+        TODO__orchestrator_drive__main["main"]
+    end
+    subgraph TODO__producer_service
+        TODO__producer_service__close_handler["close_handler"]
+        TODO__producer_service__Handler__log_message["log_message"]
+        TODO__producer_service__Handler__do_GET["do_GET"]
+        TODO__producer_service__Handler__do_POST["do_POST"]
+    end
+    subgraph ci__emit_handlers
+        ci__emit_handlers__main["main"]
+    end
+    subgraph ci__nl_to_contract
+        ci__nl_to_contract__ask_llm["ask_llm"]
+        ci__nl_to_contract__validate_doc("validate_doc CC=10")
+        ci__nl_to_contract___mock["_mock"]
+        ci__nl_to_contract__main("main CC=12")
+    end
+    subgraph ci__regen_check
+        ci__regen_check__main["main"]
+    end
+    subgraph examples__windowpair
+        examples__windowpair__src__handlers_generated__close["close"]
+        examples__windowpair__src__handlers_generated__restore["restore"]
+    end
+    subgraph orchestrator__drive
+        orchestrator__drive__post["post"]
+        orchestrator__drive__wait_ready["wait_ready"]
+        orchestrator__drive___run_pair["_run_pair"]
+        orchestrator__drive__main["main"]
+    end
+    subgraph packages__consumer
+        packages__consumer__service__restore_handler["restore_handler"]
+        packages__consumer__service__Handler__log_message["log_message"]
+        packages__consumer__service__Handler___err["_err"]
+        packages__consumer__service__Handler__do_GET["do_GET"]
+        packages__consumer__service__Handler__do_POST["do_POST"]
+    end
+    subgraph packages__consumer_go
+        packages__consumer_go__service__loadContracts["loadContracts"]
+        packages__consumer_go__service__typeOK("typeOK CC=10")
+        packages__consumer_go__service__checkSchema{{checkSchema CC=30}}
+        packages__consumer_go__service__restoreHandler["restoreHandler"]
+        packages__consumer_go__service__writeJSON["writeJSON"]
+        packages__consumer_go__service__handleRun("handleRun CC=8")
+        packages__consumer_go__service__main["main"]
+    end
+    subgraph packages__producer
+        packages__producer__service__close_handler["close_handler"]
+        packages__producer__service__Handler__log_message["log_message"]
+        packages__producer__service__Handler__do_GET["do_GET"]
+        packages__producer__service__Handler__do_POST["do_POST"]
+    end
+    subgraph toolkit__contract_gate
+        toolkit__contract_gate___parse_const["_parse_const"]
+        toolkit__contract_gate___leaf_ok["_leaf_ok"]
+        toolkit__contract_gate__check{{check CC=15}}
+        toolkit__contract_gate__validate_output["validate_output"]
+        toolkit__contract_gate__conform("conform CC=13")
+        toolkit__contract_gate__contract_to_dict["contract_to_dict"]
+        toolkit__contract_gate__attach_contracts["attach_contracts"]
+        toolkit__contract_gate__envelope_violation("envelope_violation CC=10")
+        toolkit__contract_gate__enforce["enforce"]
+        toolkit__contract_gate___terminal_type["_terminal_type"]
+        toolkit__contract_gate___walk_oneof("_walk_oneof CC=9")
+        toolkit__contract_gate___walk_out("_walk_out CC=12")
+        toolkit__contract_gate__resolve_out_type["resolve_out_type"]
+        toolkit__contract_gate__assignable["assignable"]
+        toolkit__contract_gate__check_wire("check_wire CC=10")
+        toolkit__contract_gate__find_wire["find_wire"]
+        toolkit__contract_gate__dig["dig"]
+        toolkit__contract_gate__wire_payload["wire_payload"]
+        toolkit__contract_gate__consumer_input_check("consumer_input_check CC=13")
+    end
+    subgraph toolkit__contracts_io
+        toolkit__contracts_io__load["load"]
+    end
+    subgraph urirun_contract__codegen
+        urirun_contract__codegen___base["_base"]
+        urirun_contract__codegen___snake["_snake"]
+        urirun_contract__codegen___camel["_camel"]
+        urirun_contract__codegen___const["_const"]
+        urirun_contract__codegen___inp["_inp"]
+        urirun_contract__codegen___out["_out"]
+        urirun_contract__codegen___py_value("_py_value CC=9")
+        urirun_contract__codegen__py_stub["py_stub"]
+        urirun_contract__codegen__js_stub["js_stub"]
+        urirun_contract__codegen__go_stub["go_stub"]
+        urirun_contract__codegen___load_contracts_json["_load_contracts_json"]
+        urirun_contract__codegen__emit_py_module["emit_py_module"]
+    end
+    subgraph urirun_contract__gate
+        urirun_contract__gate___parse_const["_parse_const"]
+        urirun_contract__gate___leaf_ok["_leaf_ok"]
+        urirun_contract__gate__check{{check CC=15}}
+        urirun_contract__gate__validate_output["validate_output"]
+        urirun_contract__gate__conform("conform CC=13")
+        urirun_contract__gate__contract_to_dict["contract_to_dict"]
+        urirun_contract__gate__attach_contracts["attach_contracts"]
+        urirun_contract__gate__envelope_violation("envelope_violation CC=10")
+        urirun_contract__gate__enforce["enforce"]
+        urirun_contract__gate___terminal_type["_terminal_type"]
+        urirun_contract__gate___walk_oneof("_walk_oneof CC=9")
+        urirun_contract__gate___walk_out("_walk_out CC=12")
+        urirun_contract__gate__resolve_out_type["resolve_out_type"]
+        urirun_contract__gate__assignable["assignable"]
+        urirun_contract__gate__check_wire("check_wire CC=10")
+        urirun_contract__gate__find_wire["find_wire"]
+        urirun_contract__gate__dig["dig"]
+        urirun_contract__gate__wire_payload["wire_payload"]
+        urirun_contract__gate__consumer_input_check("consumer_input_check CC=13")
+    end
+    subgraph xlang__peer
+        xlang__peer___find_wire["_find_wire"]
+        xlang__peer___ok_example["_ok_example"]
+        xlang__peer__handle["handle"]
+        xlang__peer__main("main CC=13")
+    end
+    packages__consumer_go__service__checkSchema --> packages__consumer_go__service__typeOK
+    packages__consumer_go__service__handleRun --> packages__consumer_go__service__checkSchema
+    packages__consumer_go__service__handleRun --> packages__consumer_go__service__writeJSON
+    packages__consumer_go__service__handleRun --> packages__consumer_go__service__restoreHandler
+    packages__consumer_go__service__main --> packages__consumer_go__service__loadContracts
+    packages__consumer_go__service__main --> packages__consumer_go__service__writeJSON
+    TODO__orchestrator_drive__main --> TODO__orchestrator_drive__wait_ready
+    TODO__orchestrator_drive__main --> TODO__orchestrator_drive__post
+    TODO__orchestrator_drive__main --> toolkit__contract_gate__check
+    TODO__orchestrator_drive__main --> toolkit__contract_gate__find_wire
+    TODO__orchestrator_drive__main --> toolkit__contract_gate__wire_payload
+    TODO__orchestrator_drive__main --> toolkit__contract_gate__consumer_input_check
+    ci__emit_handlers__main --> urirun_contract__codegen___load_contracts_json
+    ci__emit_handlers__main --> urirun_contract__codegen__emit_py_module
+    orchestrator__drive___run_pair --> orchestrator__drive__post
+    orchestrator__drive___run_pair --> toolkit__contract_gate__check
+    orchestrator__drive___run_pair --> toolkit__contract_gate__find_wire
+    orchestrator__drive___run_pair --> toolkit__contract_gate__wire_payload
+    orchestrator__drive___run_pair --> toolkit__contract_gate__consumer_input_check
+    orchestrator__drive__main --> orchestrator__drive__wait_ready
+    orchestrator__drive__main --> orchestrator__drive___run_pair
+    ci__nl_to_contract__validate_doc --> toolkit__contract_gate__check
+    ci__nl_to_contract__main --> ci__nl_to_contract__validate_doc
+    ci__nl_to_contract__main --> ci__nl_to_contract___mock
+    ci__nl_to_contract__main --> ci__nl_to_contract__ask_llm
+    TODO__nl_to_contract__validate_doc --> toolkit__contract_gate__check
+    TODO__nl_to_contract__main --> TODO__nl_to_contract__validate_doc
+    TODO__nl_to_contract__main --> TODO__nl_to_contract___mock
+    TODO__nl_to_contract__main --> TODO__nl_to_contract__ask_llm
+    urirun_contract__codegen___py_value --> urirun_contract__codegen___base
+    urirun_contract__codegen___py_value --> urirun_contract__codegen___const
+    urirun_contract__codegen__py_stub --> urirun_contract__codegen___out
+    urirun_contract__codegen__py_stub --> urirun_contract__codegen___inp
+    urirun_contract__codegen__py_stub --> urirun_contract__codegen___base
+    urirun_contract__codegen__py_stub --> urirun_contract__codegen___snake
+    urirun_contract__codegen__js_stub --> urirun_contract__codegen___inp
+    urirun_contract__codegen__js_stub --> urirun_contract__codegen___out
+    urirun_contract__codegen__js_stub --> urirun_contract__codegen___base
+    urirun_contract__codegen__js_stub --> urirun_contract__codegen___const
+    urirun_contract__codegen__js_stub --> urirun_contract__codegen___camel
+    urirun_contract__codegen__go_stub --> urirun_contract__codegen___inp
+    urirun_contract__codegen__go_stub --> urirun_contract__codegen___base
+    urirun_contract__codegen__go_stub --> urirun_contract__codegen___camel
+    urirun_contract__codegen__emit_py_module --> urirun_contract__codegen__py_stub
+    TODO__emit_handlers__emit --> TODO__emit_handlers__load_contracts
+    ci__regen_check__main --> urirun_contract__codegen___load_contracts_json
+    ci__regen_check__main --> urirun_contract__codegen__emit_py_module
+    toolkit__contract_gate___leaf_ok --> toolkit__contract_gate___parse_const
+    toolkit__contract_gate__check --> toolkit__contract_gate___leaf_ok
+    toolkit__contract_gate__validate_output --> toolkit__contract_gate__check
+    toolkit__contract_gate__conform --> toolkit__contract_gate__check
+    toolkit__contract_gate__attach_contracts --> toolkit__contract_gate__contract_to_dict
+    toolkit__contract_gate__envelope_violation --> toolkit__contract_gate__check
+    toolkit__contract_gate__enforce --> toolkit__contract_gate__envelope_violation
+    toolkit__contract_gate___walk_oneof --> toolkit__contract_gate___walk_out
+    toolkit__contract_gate___walk_out --> toolkit__contract_gate___terminal_type
+    toolkit__contract_gate___walk_out --> toolkit__contract_gate___walk_oneof
+    toolkit__contract_gate__resolve_out_type --> toolkit__contract_gate___walk_out
+    toolkit__contract_gate__check_wire --> toolkit__contract_gate__resolve_out_type
+    toolkit__contract_gate__check_wire --> toolkit__contract_gate__assignable
+    toolkit__contract_gate__wire_payload --> toolkit__contract_gate__dig
+    toolkit__contract_gate__consumer_input_check --> toolkit__contract_gate__check
+    urirun_contract__gate___leaf_ok --> urirun_contract__gate___parse_const
+    urirun_contract__gate__check --> urirun_contract__gate___leaf_ok
+    urirun_contract__gate__validate_output --> urirun_contract__gate__check
+    urirun_contract__gate__conform --> urirun_contract__gate__check
+    urirun_contract__gate__attach_contracts --> urirun_contract__gate__contract_to_dict
+    urirun_contract__gate__envelope_violation --> urirun_contract__gate__check
+    urirun_contract__gate__enforce --> urirun_contract__gate__envelope_violation
+    urirun_contract__gate___walk_oneof --> urirun_contract__gate___walk_out
+    urirun_contract__gate___walk_out --> urirun_contract__gate___terminal_type
+    urirun_contract__gate___walk_out --> urirun_contract__gate___walk_oneof
+    urirun_contract__gate__resolve_out_type --> urirun_contract__gate___walk_out
+    urirun_contract__gate__check_wire --> urirun_contract__gate__resolve_out_type
+    urirun_contract__gate__check_wire --> urirun_contract__gate__assignable
+    urirun_contract__gate__wire_payload --> urirun_contract__gate__dig
+    urirun_contract__gate__consumer_input_check --> urirun_contract__gate__check
+    packages__consumer__service__Handler__do_POST --> packages__consumer__service__restore_handler
+    packages__consumer__service__Handler__do_POST --> toolkit__contract_gate__check
+    packages__producer__service__Handler__do_POST --> packages__producer__service__close_handler
+    packages__producer__service__Handler__do_POST --> toolkit__contract_gate__check
+    xlang__peer__handle --> xlang__peer___ok_example
+    xlang__peer__main --> xlang__peer___find_wire
+    xlang__peer__main --> toolkit__contract_gate__wire_payload
+    xlang__peer__main --> toolkit__contract_gate__consumer_input_check
+    TODO__producer_service__Handler__do_POST --> packages__producer__service__close_handler
+    TODO__producer_service__Handler__do_POST --> toolkit__contract_gate__check
+    TODO__consumer_service__Handler__do_POST --> packages__consumer__service__restore_handler
+    TODO__consumer_service__Handler__do_POST --> toolkit__contract_gate__check
+
+    classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
+    class packages__consumer_go__service__checkSchema,toolkit__contract_gate__check,urirun_contract__gate__check highCC
+    class packages__consumer_go__service__typeOK,packages__consumer_go__service__handleRun,ci__nl_to_contract__validate_doc,ci__nl_to_contract__main,TODO__nl_to_contract__validate_doc,TODO__nl_to_contract__main,urirun_contract__codegen___py_value,toolkit__contract_gate__conform,toolkit__contract_gate__envelope_violation,toolkit__contract_gate___walk_oneof,toolkit__contract_gate___walk_out,toolkit__contract_gate__check_wire,toolkit__contract_gate__consumer_input_check,urirun_contract__gate__conform,urirun_contract__gate__envelope_violation,urirun_contract__gate___walk_oneof,urirun_contract__gate___walk_out,urirun_contract__gate__check_wire,urirun_contract__gate__consumer_input_check,xlang__peer__main medCC

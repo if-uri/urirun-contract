@@ -1,0 +1,928 @@
+project: /home/tom/github/if-uri/urirun-contract
+generated_from: code2llm call graph analysis
+stats:
+  total_nodes: 78
+  total_edges: 77
+  modules_count: 16
+nodes:
+  toolkit.contract_gate.check:
+    name: check
+    module: toolkit.contract_gate
+    line: 108
+    cyclomatic_complexity: 15
+    calls_out: 19
+    calls_in: 24
+  packages.consumer-go.service.loadContracts:
+    name: loadContracts
+    module: packages.consumer-go.service
+    line: 30
+    cyclomatic_complexity: 6
+    calls_out: 9
+    calls_in: 1
+  TODO.orchestrator_drive.post:
+    name: post
+    module: TODO.orchestrator_drive
+    line: 29
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 2
+  toolkit.contract_gate.contract_to_dict:
+    name: contract_to_dict
+    module: toolkit.contract_gate
+    line: 172
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  urirun_contract.gate.envelope_violation:
+    name: envelope_violation
+    module: urirun_contract.gate
+    line: 206
+    cyclomatic_complexity: 10
+    calls_out: 10
+    calls_in: 1
+  TODO.emit_handlers.emit:
+    name: emit
+    module: TODO.emit_handlers
+    line: 28
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  toolkit.contract_gate.assignable:
+    name: assignable
+    module: toolkit.contract_gate
+    line: 328
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 1
+  packages.consumer.service.Handler.do_POST:
+    name: do_POST
+    module: packages.consumer.service
+    line: 50
+    cyclomatic_complexity: 7
+    calls_out: 18
+    calls_in: 0
+  xlang.peer.handle:
+    name: handle
+    module: xlang.peer
+    line: 46
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 2
+  TODO.orchestrator_drive.main:
+    name: main
+    module: TODO.orchestrator_drive
+    line: 46
+    cyclomatic_complexity: 2
+    calls_out: 14
+    calls_in: 0
+  packages.producer.service.close_handler:
+    name: close_handler
+    module: packages.producer.service
+    line: 26
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  urirun_contract.gate.contract_to_dict:
+    name: contract_to_dict
+    module: urirun_contract.gate
+    line: 172
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  urirun_contract.gate._terminal_type:
+    name: _terminal_type
+    module: urirun_contract.gate
+    line: 278
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 1
+  toolkit.contract_gate.consumer_input_check:
+    name: consumer_input_check
+    module: toolkit.contract_gate
+    line: 405
+    cyclomatic_complexity: 13
+    calls_out: 18
+    calls_in: 3
+  ci.nl_to_contract.main:
+    name: main
+    module: ci.nl_to_contract
+    line: 79
+    cyclomatic_complexity: 12
+    calls_out: 24
+    calls_in: 0
+  packages.consumer-go.service.writeJSON:
+    name: writeJSON
+    module: packages.consumer-go.service
+    line: 194
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 2
+  urirun_contract.gate._leaf_ok:
+    name: _leaf_ok
+    module: urirun_contract.gate
+    line: 89
+    cyclomatic_complexity: 7
+    calls_out: 15
+    calls_in: 2
+  urirun_contract.codegen._py_value:
+    name: _py_value
+    module: urirun_contract.codegen
+    line: 69
+    cyclomatic_complexity: 9
+    calls_out: 17
+    calls_in: 3
+  urirun_contract.gate.wire_payload:
+    name: wire_payload
+    module: urirun_contract.gate
+    line: 391
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  packages.consumer-go.service.checkSchema:
+    name: checkSchema
+    module: packages.consumer-go.service
+    line: 79
+    cyclomatic_complexity: 30
+    calls_out: 8
+    calls_in: 1
+  toolkit.contract_gate.envelope_violation:
+    name: envelope_violation
+    module: toolkit.contract_gate
+    line: 206
+    cyclomatic_complexity: 10
+    calls_out: 10
+    calls_in: 1
+  urirun_contract.gate.conform:
+    name: conform
+    module: urirun_contract.gate
+    line: 145
+    cyclomatic_complexity: 13
+    calls_out: 10
+    calls_in: 0
+  toolkit.contract_gate._walk_oneof:
+    name: _walk_oneof
+    module: toolkit.contract_gate
+    line: 289
+    cyclomatic_complexity: 9
+    calls_out: 5
+    calls_in: 1
+  toolkit.contract_gate.wire_payload:
+    name: wire_payload
+    module: toolkit.contract_gate
+    line: 391
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 3
+  ci.nl_to_contract.validate_doc:
+    name: validate_doc
+    module: ci.nl_to_contract
+    line: 43
+    cyclomatic_complexity: 10
+    calls_out: 23
+    calls_in: 1
+  urirun_contract.codegen._out:
+    name: _out
+    module: urirun_contract.codegen
+    line: 65
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  urirun_contract.codegen._inp:
+    name: _inp
+    module: urirun_contract.codegen
+    line: 61
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 3
+  packages.consumer.service.restore_handler:
+    name: restore_handler
+    module: packages.consumer.service
+    line: 26
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  packages.consumer-go.service.restoreHandler:
+    name: restoreHandler
+    module: packages.consumer-go.service
+    line: 177
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  toolkit.contract_gate.attach_contracts:
+    name: attach_contracts
+    module: toolkit.contract_gate
+    line: 182
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 0
+  orchestrator.drive.wait_ready:
+    name: wait_ready
+    module: orchestrator.drive
+    line: 37
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 3
+  urirun_contract.gate.consumer_input_check:
+    name: consumer_input_check
+    module: urirun_contract.gate
+    line: 405
+    cyclomatic_complexity: 13
+    calls_out: 18
+    calls_in: 0
+  ci.emit_handlers.main:
+    name: main
+    module: ci.emit_handlers
+    line: 24
+    cyclomatic_complexity: 5
+    calls_out: 16
+    calls_in: 0
+  xlang.peer.main:
+    name: main
+    module: xlang.peer
+    line: 58
+    cyclomatic_complexity: 13
+    calls_out: 52
+    calls_in: 0
+  TODO.nl_to_contract.validate_doc:
+    name: validate_doc
+    module: TODO.nl_to_contract
+    line: 41
+    cyclomatic_complexity: 10
+    calls_out: 19
+    calls_in: 1
+  packages.consumer-go.service.main:
+    name: main
+    module: packages.consumer-go.service
+    line: 233
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  urirun_contract.gate.attach_contracts:
+    name: attach_contracts
+    module: urirun_contract.gate
+    line: 182
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 0
+  packages.producer.service.Handler.do_POST:
+    name: do_POST
+    module: packages.producer.service
+    line: 46
+    cyclomatic_complexity: 4
+    calls_out: 19
+    calls_in: 0
+  urirun_contract.codegen.go_stub:
+    name: go_stub
+    module: urirun_contract.codegen
+    line: 140
+    cyclomatic_complexity: 3
+    calls_out: 11
+    calls_in: 0
+  urirun_contract.codegen.py_stub:
+    name: py_stub
+    module: urirun_contract.codegen
+    line: 86
+    cyclomatic_complexity: 7
+    calls_out: 17
+    calls_in: 1
+  urirun_contract.gate._parse_const:
+    name: _parse_const
+    module: urirun_contract.gate
+    line: 79
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  toolkit.contract_gate.conform:
+    name: conform
+    module: toolkit.contract_gate
+    line: 145
+    cyclomatic_complexity: 13
+    calls_out: 10
+    calls_in: 0
+  xlang.peer._find_wire:
+    name: _find_wire
+    module: xlang.peer
+    line: 32
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  urirun_contract.gate.check:
+    name: check
+    module: urirun_contract.gate
+    line: 108
+    cyclomatic_complexity: 15
+    calls_out: 19
+    calls_in: 10
+  toolkit.contract_gate._terminal_type:
+    name: _terminal_type
+    module: toolkit.contract_gate
+    line: 278
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 1
+  urirun_contract.codegen._base:
+    name: _base
+    module: urirun_contract.codegen
+    line: 42
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 5
+  packages.consumer-go.service.typeOK:
+    name: typeOK
+    module: packages.consumer-go.service
+    line: 59
+    cyclomatic_complexity: 10
+    calls_out: 1
+    calls_in: 1
+  ci.regen_check.main:
+    name: main
+    module: ci.regen_check
+    line: 23
+    cyclomatic_complexity: 6
+    calls_out: 15
+    calls_in: 0
+  orchestrator.drive.post:
+    name: post
+    module: orchestrator.drive
+    line: 30
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 2
+  packages.consumer-go.service.handleRun:
+    name: handleRun
+    module: packages.consumer-go.service
+    line: 200
+    cyclomatic_complexity: 8
+    calls_out: 6
+    calls_in: 0
+  orchestrator.drive.main:
+    name: main
+    module: orchestrator.drive
+    line: 68
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 0
+  TODO.nl_to_contract.main:
+    name: main
+    module: TODO.nl_to_contract
+    line: 75
+    cyclomatic_complexity: 9
+    calls_out: 19
+    calls_in: 0
+  TODO.producer_service.Handler.do_POST:
+    name: do_POST
+    module: TODO.producer_service
+    line: 46
+    cyclomatic_complexity: 4
+    calls_out: 19
+    calls_in: 0
+  TODO.consumer_service.Handler.do_POST:
+    name: do_POST
+    module: TODO.consumer_service
+    line: 50
+    cyclomatic_complexity: 7
+    calls_out: 18
+    calls_in: 0
+  toolkit.contract_gate.find_wire:
+    name: find_wire
+    module: toolkit.contract_gate
+    line: 370
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 2
+  urirun_contract.codegen.js_stub:
+    name: js_stub
+    module: urirun_contract.codegen
+    line: 112
+    cyclomatic_complexity: 5
+    calls_out: 26
+    calls_in: 0
+  urirun_contract.gate.assignable:
+    name: assignable
+    module: urirun_contract.gate
+    line: 328
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 1
+  toolkit.contract_gate._parse_const:
+    name: _parse_const
+    module: toolkit.contract_gate
+    line: 79
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  toolkit.contract_gate.resolve_out_type:
+    name: resolve_out_type
+    module: toolkit.contract_gate
+    line: 323
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  toolkit.contract_gate._walk_out:
+    name: _walk_out
+    module: toolkit.contract_gate
+    line: 303
+    cyclomatic_complexity: 12
+    calls_out: 13
+    calls_in: 4
+  urirun_contract.codegen.emit_py_module:
+    name: emit_py_module
+    module: urirun_contract.codegen
+    line: 168
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  urirun_contract.gate._walk_oneof:
+    name: _walk_oneof
+    module: urirun_contract.gate
+    line: 289
+    cyclomatic_complexity: 9
+    calls_out: 5
+    calls_in: 1
+  toolkit.contract_gate.check_wire:
+    name: check_wire
+    module: toolkit.contract_gate
+    line: 337
+    cyclomatic_complexity: 10
+    calls_out: 11
+    calls_in: 0
+  urirun_contract.codegen._load_contracts_json:
+    name: _load_contracts_json
+    module: urirun_contract.codegen
+    line: 161
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 2
+  urirun_contract.gate.check_wire:
+    name: check_wire
+    module: urirun_contract.gate
+    line: 337
+    cyclomatic_complexity: 10
+    calls_out: 11
+    calls_in: 0
+  urirun_contract.gate._walk_out:
+    name: _walk_out
+    module: urirun_contract.gate
+    line: 303
+    cyclomatic_complexity: 12
+    calls_out: 13
+    calls_in: 4
+  TODO.emit_handlers.load_contracts:
+    name: load_contracts
+    module: TODO.emit_handlers
+    line: 22
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  urirun_contract.codegen._const:
+    name: _const
+    module: urirun_contract.codegen
+    line: 56
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 2
+  TODO.orchestrator_drive.wait_ready:
+    name: wait_ready
+    module: TODO.orchestrator_drive
+    line: 36
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  toolkit.contract_gate.dig:
+    name: dig
+    module: toolkit.contract_gate
+    line: 378
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  xlang.peer._ok_example:
+    name: _ok_example
+    module: xlang.peer
+    line: 39
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 2
+  urirun_contract.gate.validate_output:
+    name: validate_output
+    module: urirun_contract.gate
+    line: 137
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  toolkit.contract_gate.validate_output:
+    name: validate_output
+    module: toolkit.contract_gate
+    line: 137
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  orchestrator.drive._run_pair:
+    name: _run_pair
+    module: orchestrator.drive
+    line: 47
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 2
+  toolkit.contract_gate._leaf_ok:
+    name: _leaf_ok
+    module: toolkit.contract_gate
+    line: 89
+    cyclomatic_complexity: 7
+    calls_out: 15
+    calls_in: 2
+  urirun_contract.gate.dig:
+    name: dig
+    module: urirun_contract.gate
+    line: 378
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  urirun_contract.codegen._camel:
+    name: _camel
+    module: urirun_contract.codegen
+    line: 50
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 2
+  urirun_contract.gate.resolve_out_type:
+    name: resolve_out_type
+    module: urirun_contract.gate
+    line: 323
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+edges:
+- caller: packages.consumer-go.service.checkSchema
+  callee: packages.consumer-go.service.typeOK
+  call_type: resolved
+- caller: packages.consumer-go.service.handleRun
+  callee: packages.consumer-go.service.checkSchema
+  call_type: resolved
+- caller: packages.consumer-go.service.handleRun
+  callee: packages.consumer-go.service.writeJSON
+  call_type: resolved
+- caller: packages.consumer-go.service.handleRun
+  callee: packages.consumer-go.service.restoreHandler
+  call_type: resolved
+- caller: packages.consumer-go.service.main
+  callee: packages.consumer-go.service.loadContracts
+  call_type: resolved
+- caller: packages.consumer-go.service.main
+  callee: packages.consumer-go.service.writeJSON
+  call_type: resolved
+- caller: TODO.orchestrator_drive.main
+  callee: TODO.orchestrator_drive.wait_ready
+  call_type: resolved
+- caller: TODO.orchestrator_drive.main
+  callee: TODO.orchestrator_drive.post
+  call_type: resolved
+- caller: TODO.orchestrator_drive.main
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: TODO.orchestrator_drive.main
+  callee: toolkit.contract_gate.find_wire
+  call_type: resolved
+- caller: TODO.orchestrator_drive.main
+  callee: toolkit.contract_gate.wire_payload
+  call_type: resolved
+- caller: TODO.orchestrator_drive.main
+  callee: toolkit.contract_gate.consumer_input_check
+  call_type: resolved
+- caller: ci.emit_handlers.main
+  callee: urirun_contract.codegen._load_contracts_json
+  call_type: resolved
+- caller: ci.emit_handlers.main
+  callee: urirun_contract.codegen.emit_py_module
+  call_type: resolved
+- caller: orchestrator.drive._run_pair
+  callee: orchestrator.drive.post
+  call_type: resolved
+- caller: orchestrator.drive._run_pair
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: orchestrator.drive._run_pair
+  callee: toolkit.contract_gate.find_wire
+  call_type: resolved
+- caller: orchestrator.drive._run_pair
+  callee: toolkit.contract_gate.wire_payload
+  call_type: resolved
+- caller: orchestrator.drive._run_pair
+  callee: toolkit.contract_gate.consumer_input_check
+  call_type: resolved
+- caller: orchestrator.drive.main
+  callee: orchestrator.drive.wait_ready
+  call_type: resolved
+- caller: orchestrator.drive.main
+  callee: orchestrator.drive._run_pair
+  call_type: resolved
+- caller: ci.nl_to_contract.main
+  callee: ci.nl_to_contract.validate_doc
+  call_type: resolved
+- caller: TODO.nl_to_contract.main
+  callee: TODO.nl_to_contract.validate_doc
+  call_type: resolved
+- caller: urirun_contract.codegen._py_value
+  callee: urirun_contract.codegen._base
+  call_type: resolved
+- caller: urirun_contract.codegen._py_value
+  callee: urirun_contract.codegen._const
+  call_type: resolved
+- caller: urirun_contract.codegen.py_stub
+  callee: urirun_contract.codegen._out
+  call_type: resolved
+- caller: urirun_contract.codegen.py_stub
+  callee: urirun_contract.codegen._inp
+  call_type: resolved
+- caller: urirun_contract.codegen.js_stub
+  callee: urirun_contract.codegen._inp
+  call_type: resolved
+- caller: urirun_contract.codegen.js_stub
+  callee: urirun_contract.codegen._out
+  call_type: resolved
+- caller: urirun_contract.codegen.js_stub
+  callee: urirun_contract.codegen._base
+  call_type: resolved
+- caller: urirun_contract.codegen.go_stub
+  callee: urirun_contract.codegen._inp
+  call_type: resolved
+- caller: urirun_contract.codegen.go_stub
+  callee: urirun_contract.codegen._base
+  call_type: resolved
+- caller: urirun_contract.codegen.go_stub
+  callee: urirun_contract.codegen._camel
+  call_type: resolved
+- caller: urirun_contract.codegen.emit_py_module
+  callee: urirun_contract.codegen.py_stub
+  call_type: resolved
+- caller: TODO.emit_handlers.emit
+  callee: TODO.emit_handlers.load_contracts
+  call_type: resolved
+- caller: ci.regen_check.main
+  callee: urirun_contract.codegen._load_contracts_json
+  call_type: resolved
+- caller: ci.regen_check.main
+  callee: urirun_contract.codegen.emit_py_module
+  call_type: resolved
+- caller: toolkit.contract_gate._leaf_ok
+  callee: toolkit.contract_gate._parse_const
+  call_type: resolved
+- caller: toolkit.contract_gate.check
+  callee: toolkit.contract_gate._leaf_ok
+  call_type: resolved
+- caller: toolkit.contract_gate.validate_output
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: toolkit.contract_gate.conform
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: toolkit.contract_gate.attach_contracts
+  callee: toolkit.contract_gate.contract_to_dict
+  call_type: resolved
+- caller: toolkit.contract_gate.envelope_violation
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: toolkit.contract_gate._walk_oneof
+  callee: toolkit.contract_gate._walk_out
+  call_type: resolved
+- caller: toolkit.contract_gate._walk_out
+  callee: toolkit.contract_gate._terminal_type
+  call_type: resolved
+- caller: toolkit.contract_gate._walk_out
+  callee: toolkit.contract_gate._walk_oneof
+  call_type: resolved
+- caller: toolkit.contract_gate.resolve_out_type
+  callee: toolkit.contract_gate._walk_out
+  call_type: resolved
+- caller: toolkit.contract_gate.check_wire
+  callee: toolkit.contract_gate.resolve_out_type
+  call_type: resolved
+- caller: toolkit.contract_gate.check_wire
+  callee: toolkit.contract_gate.assignable
+  call_type: resolved
+- caller: toolkit.contract_gate.wire_payload
+  callee: toolkit.contract_gate.dig
+  call_type: resolved
+- caller: toolkit.contract_gate.consumer_input_check
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: urirun_contract.gate._leaf_ok
+  callee: urirun_contract.gate._parse_const
+  call_type: resolved
+- caller: urirun_contract.gate.check
+  callee: urirun_contract.gate._leaf_ok
+  call_type: resolved
+- caller: urirun_contract.gate.validate_output
+  callee: urirun_contract.gate.check
+  call_type: resolved
+- caller: urirun_contract.gate.conform
+  callee: urirun_contract.gate.check
+  call_type: resolved
+- caller: urirun_contract.gate.attach_contracts
+  callee: urirun_contract.gate.contract_to_dict
+  call_type: resolved
+- caller: urirun_contract.gate.envelope_violation
+  callee: urirun_contract.gate.check
+  call_type: resolved
+- caller: urirun_contract.gate._walk_oneof
+  callee: urirun_contract.gate._walk_out
+  call_type: resolved
+- caller: urirun_contract.gate._walk_out
+  callee: urirun_contract.gate._terminal_type
+  call_type: resolved
+- caller: urirun_contract.gate._walk_out
+  callee: urirun_contract.gate._walk_oneof
+  call_type: resolved
+- caller: urirun_contract.gate.resolve_out_type
+  callee: urirun_contract.gate._walk_out
+  call_type: resolved
+- caller: urirun_contract.gate.check_wire
+  callee: urirun_contract.gate.resolve_out_type
+  call_type: resolved
+- caller: urirun_contract.gate.check_wire
+  callee: urirun_contract.gate.assignable
+  call_type: resolved
+- caller: urirun_contract.gate.wire_payload
+  callee: urirun_contract.gate.dig
+  call_type: resolved
+- caller: urirun_contract.gate.consumer_input_check
+  callee: urirun_contract.gate.check
+  call_type: resolved
+- caller: packages.consumer.service.Handler.do_POST
+  callee: packages.consumer.service.restore_handler
+  call_type: resolved
+- caller: packages.consumer.service.Handler.do_POST
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: packages.producer.service.Handler.do_POST
+  callee: packages.producer.service.close_handler
+  call_type: resolved
+- caller: packages.producer.service.Handler.do_POST
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: xlang.peer.handle
+  callee: xlang.peer._ok_example
+  call_type: resolved
+- caller: xlang.peer.main
+  callee: xlang.peer._find_wire
+  call_type: resolved
+- caller: xlang.peer.main
+  callee: toolkit.contract_gate.wire_payload
+  call_type: resolved
+- caller: xlang.peer.main
+  callee: toolkit.contract_gate.consumer_input_check
+  call_type: resolved
+- caller: TODO.producer_service.Handler.do_POST
+  callee: packages.producer.service.close_handler
+  call_type: resolved
+- caller: TODO.producer_service.Handler.do_POST
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+- caller: TODO.consumer_service.Handler.do_POST
+  callee: packages.consumer.service.restore_handler
+  call_type: resolved
+- caller: TODO.consumer_service.Handler.do_POST
+  callee: toolkit.contract_gate.check
+  call_type: resolved
+modules:
+  TODO.consumer_service:
+  - TODO.consumer_service.Handler.do_POST
+  TODO.emit_handlers:
+  - TODO.emit_handlers.emit
+  - TODO.emit_handlers.load_contracts
+  TODO.nl_to_contract:
+  - TODO.nl_to_contract.main
+  - TODO.nl_to_contract.validate_doc
+  TODO.orchestrator_drive:
+  - TODO.orchestrator_drive.main
+  - TODO.orchestrator_drive.post
+  - TODO.orchestrator_drive.wait_ready
+  TODO.producer_service:
+  - TODO.producer_service.Handler.do_POST
+  ci.emit_handlers:
+  - ci.emit_handlers.main
+  ci.nl_to_contract:
+  - ci.nl_to_contract.main
+  - ci.nl_to_contract.validate_doc
+  ci.regen_check:
+  - ci.regen_check.main
+  orchestrator.drive:
+  - orchestrator.drive._run_pair
+  - orchestrator.drive.main
+  - orchestrator.drive.post
+  - orchestrator.drive.wait_ready
+  packages.consumer-go.service:
+  - packages.consumer-go.service.checkSchema
+  - packages.consumer-go.service.handleRun
+  - packages.consumer-go.service.loadContracts
+  - packages.consumer-go.service.main
+  - packages.consumer-go.service.restoreHandler
+  - packages.consumer-go.service.typeOK
+  - packages.consumer-go.service.writeJSON
+  packages.consumer.service:
+  - packages.consumer.service.Handler.do_POST
+  - packages.consumer.service.restore_handler
+  packages.producer.service:
+  - packages.producer.service.Handler.do_POST
+  - packages.producer.service.close_handler
+  toolkit.contract_gate:
+  - toolkit.contract_gate._leaf_ok
+  - toolkit.contract_gate._parse_const
+  - toolkit.contract_gate._terminal_type
+  - toolkit.contract_gate._walk_oneof
+  - toolkit.contract_gate._walk_out
+  - toolkit.contract_gate.assignable
+  - toolkit.contract_gate.attach_contracts
+  - toolkit.contract_gate.check
+  - toolkit.contract_gate.check_wire
+  - toolkit.contract_gate.conform
+  - toolkit.contract_gate.consumer_input_check
+  - toolkit.contract_gate.contract_to_dict
+  - toolkit.contract_gate.dig
+  - toolkit.contract_gate.envelope_violation
+  - toolkit.contract_gate.find_wire
+  - toolkit.contract_gate.resolve_out_type
+  - toolkit.contract_gate.validate_output
+  - toolkit.contract_gate.wire_payload
+  urirun_contract.codegen:
+  - urirun_contract.codegen._base
+  - urirun_contract.codegen._camel
+  - urirun_contract.codegen._const
+  - urirun_contract.codegen._inp
+  - urirun_contract.codegen._load_contracts_json
+  - urirun_contract.codegen._out
+  - urirun_contract.codegen._py_value
+  - urirun_contract.codegen.emit_py_module
+  - urirun_contract.codegen.go_stub
+  - urirun_contract.codegen.js_stub
+  - urirun_contract.codegen.py_stub
+  urirun_contract.gate:
+  - urirun_contract.gate._leaf_ok
+  - urirun_contract.gate._parse_const
+  - urirun_contract.gate._terminal_type
+  - urirun_contract.gate._walk_oneof
+  - urirun_contract.gate._walk_out
+  - urirun_contract.gate.assignable
+  - urirun_contract.gate.attach_contracts
+  - urirun_contract.gate.check
+  - urirun_contract.gate.check_wire
+  - urirun_contract.gate.conform
+  - urirun_contract.gate.consumer_input_check
+  - urirun_contract.gate.contract_to_dict
+  - urirun_contract.gate.dig
+  - urirun_contract.gate.envelope_violation
+  - urirun_contract.gate.resolve_out_type
+  - urirun_contract.gate.validate_output
+  - urirun_contract.gate.wire_payload
+  xlang.peer:
+  - xlang.peer._find_wire
+  - xlang.peer._ok_example
+  - xlang.peer.handle
+  - xlang.peer.main
+entry_points:
+- TODO.consumer_service.Handler._err
+- TODO.consumer_service.Handler.do_GET
+- TODO.consumer_service.Handler.do_POST
+- TODO.consumer_service.Handler.log_message
+- TODO.consumer_service.restore_handler
+- TODO.contracts_io.load
+- TODO.emit_handlers.emit
+- TODO.handlers_generated.close
+- TODO.handlers_generated.restore
+- TODO.nl_to_contract.main
+- TODO.orchestrator_drive.main
+- TODO.producer_service.Handler.do_GET
+- TODO.producer_service.Handler.do_POST
+- TODO.producer_service.Handler.log_message
+- TODO.producer_service.close_handler
+- ci.emit_handlers.main
+- ci.nl_to_contract.main
+- ci.regen_check.main
+- examples.windowpair.src.handlers_generated.close
+- examples.windowpair.src.handlers_generated.restore
+- orchestrator.drive.main
+- packages.consumer-go.service.handleRun
+- packages.consumer-go.service.main
+- packages.consumer.service.Handler._err
+- packages.consumer.service.Handler.do_GET
+- packages.consumer.service.Handler.do_POST
+- packages.consumer.service.Handler.log_message
+- packages.producer.service.Handler.do_GET
+- packages.producer.service.Handler.do_POST
+- packages.producer.service.Handler.log_message
+- toolkit.contract_gate.attach_contracts
+- toolkit.contract_gate.check_wire
+- toolkit.contract_gate.conform
+- toolkit.contract_gate.enforce
+- toolkit.contract_gate.validate_output
+- toolkit.contracts_io.load
+- urirun_contract.codegen.go_stub
+- urirun_contract.codegen.js_stub
+- urirun_contract.gate.attach_contracts
+- urirun_contract.gate.check_wire
+- urirun_contract.gate.conform
+- urirun_contract.gate.consumer_input_check
+- urirun_contract.gate.enforce
+- urirun_contract.gate.find_wire
+- urirun_contract.gate.validate_output
+- urirun_contract.gate.wire_payload
+- xlang.peer.main
