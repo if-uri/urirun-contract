@@ -1,4 +1,4 @@
-.PHONY: help test contract gen check lint install integration sync-toolkit check-toolkit-sync
+.PHONY: help test contract gen check lint install integration single-source
 PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
 
@@ -23,12 +23,8 @@ check: ## wszystkie bramy lokalne (bez LLM, te same co CI)
 lint: ## CC gate (radon -n D)
 	radon cc -n D urirun_contract/
 
-sync-toolkit: ## Skopiuj urirun_contract/gate.py → toolkit/contract_gate.py
-	cp urirun_contract/gate.py toolkit/contract_gate.py
-	@echo "zsynchronizowano toolkit/contract_gate.py"
-
-check-toolkit-sync: ## CI: upewnij się, że toolkit nie dryfuje od pakietu
-	diff toolkit/contract_gate.py urirun_contract/gate.py
+single-source: ## CI: kernel (gate/codegen) zdefiniowany w JEDNYM miejscu; reszta to re-eksport
+	$(PY) -m urirun_contract.check_single_source .
 
 integration: ## Test HTTP end-to-end (py→py + py→go) bez Dockera
 	@CONTRACTS=contracts.json PORT=8801 $(PY) packages/producer/service.py & P1=$$!; \
