@@ -1,5 +1,6 @@
 name: contract
 on: [push, pull_request]
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -8,10 +9,18 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install -e . pytest
-      # CI jest DETERMINISTYCZNE: bez LLM. Kontrakt i wygenerowany kod są już w repo.
-      - run: python -m pytest tests/ -q
-      - run: bash ci/pre_commit.sh
-        working-directory: examples/windowpair
+
+      - name: unit tests (gate + codegen)
+        run: python -m pytest tests/ -q
+
+      - name: windowpair — kontrakt konformuje
+        run: python ci/nl_to_contract.py --validate examples/windowpair/contracts.json
+
+      - name: windowpair — brak dryfu między kontraktem a wygenerowanym kodem
+        run: python ci/regen_check.py examples/windowpair/contracts.json examples/windowpair/src/handlers_generated.py
+
+      - name: toolkit sync — toolkit/contract_gate.py == urirun_contract/gate.py
+        run: diff toolkit/contract_gate.py urirun_contract/gate.py
 
   integration:
     runs-on: ubuntu-latest
@@ -21,16 +30,17 @@ jobs:
         with: { python-version: "3.12" }
       - uses: actions/setup-go@v5
         with: { go-version: "1.22" }
-      # Uruchom oba serwisy i Go consumer jako procesy, puść orchestrator po sieci.
-      # To samo co `docker compose up` ale bez Dockera (GitHub runner ma go+python natywnie).
-      - name: start producer
+
+      - name: start producer (Python :8801)
         run: CONTRACTS=contracts.json PORT=8801 python packages/producer/service.py &
-      - name: start consumer (Python)
+
+      - name: start consumer Python (:8802)
         run: CONTRACTS=contracts.json PORT=8802 python packages/consumer/service.py &
-      - name: build + start consumer (Go)
+
+      - name: build + start consumer Go (:8803)
         run: |
           go build -C packages/consumer-go -o /tmp/consumer-go .
           CONTRACTS=$PWD/contracts.json PORT=8803 /tmp/consumer-go &
-      - name: orchestrate (wait_ready + full handoff py+go)
-        run: |
-          CONTRACTS=contracts.json CONSUMER_GO_URL=http://localhost:8803 python orchestrator/drive.py
+
+      - name: orchestrate — wait_ready + py→py + py→go
+        run: CONTRACTS=contracts.json CONSUMER_GO_URL=http://localhost:8803 python orchestrator/drive.py

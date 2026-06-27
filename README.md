@@ -110,6 +110,52 @@ examples/windowpair/     — odwracalna para window/close ↔ window/restore
   src/handlers_generated.py  — wygenerowany szkielet (nie edytuj ręcznie)
 ```
 
+## Multi-package HTTP (architektura wdrożeniowa)
+
+Dwa niezależnie wdrożone procesy różnych URI rozmawiające po HTTP, powiązane jednym
+`contracts.json`. Orchestrator jest **bramą międzyprocesową**: nie współdzieli pamięci
+z żadną ze stron, tylko weryfikuje JSON na sieci.
+
+```
+producer (Python, :8801)                    consumer-py (Python, :8802)
+  window/command/close                          window/command/restore
+       │                                               ▲
+       │  POST /run → koperta JSON                     │
+       │                                               │
+       └────────────┐                    ┌─────────────┘
+                    │  orchestrator       │
+                    │  drive.py           │
+                    │  ┌──────────────────┤
+                    │  │ 1. POST producer │
+                    │  │ 2. wire_payload  │
+                    └──│ 3. check handoff │──▶  consumer-go (Go, :8803)
+                       │ 4. POST consumer │      window/command/restore
+                       └─────────────────┘      (ten sam contracts.json,
+                                                 różny język i kontener)
+```
+
+```bash
+make integration          # uruchom lokalne procesy i orchestruj (bez Dockera)
+docker compose up --build --abort-on-container-exit --exit-code-from orchestrator
+```
+
+Udowodnione na realnych portach HTTP:
+- `producer(py) ──HTTP──▶ consumer(py)` — full handoff, exit 0
+- `producer(py) ──HTTP──▶ consumer(go)` — full handoff, exit 0
+- consumer(py) i consumer(go): `snapshot=string → 422`, brak `url → 422 + remediation`
+
+### Struktura repozytrorium
+
+```
+contracts.json            ← jedno źródło prawdy
+toolkit/                  ← gate kopiowany do każdego obrazu (zsynchronizuj: make sync-toolkit)
+packages/producer/        ← Python, :8801
+packages/consumer/        ← Python, :8802
+packages/consumer-go/     ← Go, :8803  (te same weryfikacje, inny runtime)
+orchestrator/drive.py     ← brama: py→py + py→go
+docker-compose.yml        ← 4 serwisy z health-checks
+```
+
 ## Licencja
 
 Apache-2.0 · Tom Sapletta · https://tom.sapletta.com
