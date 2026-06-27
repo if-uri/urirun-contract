@@ -48,3 +48,27 @@ pre-commit install         # wepnij bramy w git (uruchamiają się przy każdym 
 
 Workflow `.github/workflows/contract.yml` uruchamia **te same** bramy co pre-commit —
 deterministycznie, bez LLM. Kontrakt i wygenerowany kod są w repo i recenzowane w PR.
+
+## Wariant wielopakietowy (dwa procesy, transport, Docker)
+
+Ten sam `contracts.json` napędza dwa NIEZALEŻNIE wdrażane pakiety gadające po HTTP:
+
+```
+packages/producer/  → serwis HTTP: window/command/close   (enforce wyjścia na granicy)
+packages/consumer/  → serwis HTTP: window/command/restore  (enforce wejścia na granicy)
+orchestrator/       → woła producenta, stosuje krawędź WIRES, woła konsumenta, waliduje
+toolkit/            → JEDNO źródło bramy, kopiowane do każdego obrazu (jak pip install)
+```
+
+Każdy serwis ładuje wspólny kontrakt niezależnie i egzekwuje go na granicy transportu —
+konsument odrzuca każdy payload niezgodny z `restore.inp` (czyjkolwiek by nie był).
+
+```bash
+# lokalnie (bez dockera):
+PORT=8801 python packages/producer/service.py &
+PORT=8802 python packages/consumer/service.py &
+python orchestrator/drive.py
+
+# w kontenerach — orchestrator zwraca kod CI po sieci:
+docker compose up --build --abort-on-container-exit --exit-code-from orchestrator
+```
