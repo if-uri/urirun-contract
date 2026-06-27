@@ -12,3 +12,25 @@ jobs:
       - run: python -m pytest tests/ -q
       - run: bash ci/pre_commit.sh
         working-directory: examples/windowpair
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-go@v5
+        with: { go-version: "1.22" }
+      # Uruchom oba serwisy i Go consumer jako procesy, puść orchestrator po sieci.
+      # To samo co `docker compose up` ale bez Dockera (GitHub runner ma go+python natywnie).
+      - name: start producer
+        run: CONTRACTS=contracts.json PORT=8801 python packages/producer/service.py &
+      - name: start consumer (Python)
+        run: CONTRACTS=contracts.json PORT=8802 python packages/consumer/service.py &
+      - name: build + start consumer (Go)
+        run: |
+          go build -C packages/consumer-go -o /tmp/consumer-go .
+          CONTRACTS=$PWD/contracts.json PORT=8803 /tmp/consumer-go &
+      - name: orchestrate (wait_ready + full handoff py+go)
+        run: |
+          CONTRACTS=contracts.json CONSUMER_GO_URL=http://localhost:8803 python orchestrator/drive.py
