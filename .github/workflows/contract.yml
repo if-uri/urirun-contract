@@ -16,6 +16,9 @@ jobs:
       - name: jedno źródło kernela (gate + codegen bez duplikatów)
         run: python check_single_source.py .
 
+      - name: pokrycie floty kontraktami (ratchet)
+        run: python ci/fleet_coverage.py .. --baseline ci/fleet_coverage.baseline.json
+
       - name: toolkit jest re-eksportem (nie kopią)
         run: python -c "import ast,sys; tree=ast.parse(open('toolkit/contract_gate.py').read()); defs=[n for n in ast.walk(tree) if isinstance(n,(ast.FunctionDef,ast.ClassDef))]; sys.exit(1 if defs else 0)"
 
@@ -24,6 +27,9 @@ jobs:
 
       - name: windowpair — brak dryfu między kontraktem a wygenerowanym kodem
         run: python ci/regen_check.py examples/windowpair/contracts.json examples/windowpair/src/handlers_generated.py
+
+      - name: windowpair — zmiana kontraktu wstecznie kompatybilna (additive-only vs baseline)
+        run: python ci/check_compat.py examples/windowpair/contracts.baseline.json examples/windowpair/contracts.json
 
   integration:
     runs-on: ubuntu-latest
