@@ -114,3 +114,15 @@ def test_contracts_from_bindings_scaffolds_and_conforms():
     assert doc["contracts"]["records/query/search"]["effect"] == "query"
     assert doc["contracts"]["record/command/upsert"]["inp"] == {"id": "str"}  # z przykładu
     conform(_to_contracts(doc))  # szkielet jest poprawnym punktem startowym, nie śmieciem
+
+
+def test_scaffold_gaps_flags_non_inferable_effect():
+    """URI łamiące noun/verb/action (ksef: czasownik na końcu) — `scaffold_gaps` MUSI nagłośnić, że
+    efekt zgadnięto, a nie cicho przepuścić zły domysł `query` (conform i tak by je odrzucił)."""
+    from urirun_contract.contract_scaffold import effect_inferable
+    assert effect_inferable("invoice/command/send") and effect_inferable("records/query/search")
+    assert not effect_inferable("auth/challenge") and not effect_inferable("cert/enroll")
+    doc = contracts_from_routes(["auth/challenge", "message/command/send"], {})
+    gaps = scaffold_gaps(doc)
+    assert any("auth/challenge" in g and "efekt NIE wywnioskowany" in g for g in gaps)
+    assert not any("message/command/send" in g and "efekt NIE wywnioskowany" in g for g in gaps)

@@ -64,6 +64,15 @@ def effect_of(route: str) -> str:
     return "query"
 
 
+def effect_inferable(route: str) -> bool:
+    """Czy efekt DA SIĘ wywnioskować z czasownika URI (`/command/` lub `/query/` w ścieżce). False =
+    URI łamie konwencję noun/verb/action (np. ksef `auth/challenge`, `cert/enroll` — czasownik na
+    końcu), więc `effect_of` ZGADUJE `query`, a `conform` (efekt↔czasownik) to odrzuci. `scaffold_gaps`
+    nagłaśnia to zamiast cicho przepuszczać zły domysł."""
+    segs = route.split("/")
+    return "command" in segs or "query" in segs
+
+
 def _infer_inp(examples: list[dict]) -> dict:
     """Pola wejścia z przykładów: wymagane jeśli w KAŻDYM, opcjonalne jeśli w niektórych."""
     payloads = [ex.get("payload", {}) for ex in examples if isinstance(ex.get("payload"), dict)]
@@ -138,6 +147,10 @@ def scaffold_gaps(contracts_doc: dict) -> list[str]:
     """Czego brakuje w szkielecie, żeby kontrakt był pełny (out, reversible-inverse, przykłady-result)."""
     gaps: list[str] = []
     for route, c in contracts_doc.get("contracts", {}).items():
+        if not effect_inferable(route):
+            gaps.append(f"{route}: efekt NIE wywnioskowany z URI (brak `/command/`//`/query/`) — "
+                        f"szkielet zgadł `{c.get('effect')}`; zadeklaruj efekt ręcznie "
+                        f"(conform odrzuci, dopóki URI łamie noun/verb/action)")
         if not c.get("out"):
             gaps.append(f"{route}: pusty `out` — uzupełnij kształt wyjścia")
         if c.get("effect") == "command" and not c.get("reversible"):
