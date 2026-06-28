@@ -78,7 +78,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 
 ### Adopcja floty (`contract_scaffold` + `fleet_coverage`)
 
-~37 konektorów, kontrakt ma 8 — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
+~37 konektorów, kontrakt ma 14 (i rośnie) — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
 `contract_scaffold.contracts_from_manifest`/`contracts_from_routes` buduje szkielet `contracts.json`
 z tras connectora. Trasy odkrywane z TRZECH źródeł: `discover_routes` (dekoratory `@conn.handler/
 command/query` w `core.py` — źródło prawdy connectorów Python) + `connector.manifest.json` +
@@ -92,6 +92,17 @@ kontraktu. Domyślny tor używa `ci/fleet_coverage.baseline.json` jako ratchetu:
 jawne, ale nowy mutujący connector bez kontraktu failuje pre-commit/CI. `--strict` failuje na
 wszystkie braki i jest celem po domknięciu adopcji. Konektor bez wykrywalnych tras jest raportowany
 JAWNIE jako „nieznany", nie cicho przepuszczany. `make scaffold CONN=...` / `make fleet-coverage`.
+
+**Wzorzec uzupełniania (od szkieletu do kontraktu).** Szkielet daje trasy + efekt + wejście; `out`
+trzeba dopisać WIERNIE wobec `core.py`, nie zgadując. Większość connectorów zwraca przez
+`urirun.ok(**fields)` = `{ok:True, **fields}`, więc kształt `out` = jawne kwargi (`const:` dla
+literałów typu `action`, stałe pola + `**meta`/`**bindings` jako nadmiar dozwolony). Pola rozbieżne
+między gałęziami → `?opcjonalne` albo `{"oneOf":[…]}`. Każdy adoptowany connector dostaje
+`tests/test_contract.py`: `conform` (efekt↔czasownik, przykłady spełniają in/out, reguły reversible)
++ „każda trasa `@conn.handler` (po `route_key`) ma wpis w `contracts.json`" — to anti-dryf deklaracja↔kod.
+Connectory mutujące-odwracalne deklarują `reversible:true` + `inverseRoute` (np. `namecheap-dns`
+`records/command/apply` wymusza `backup_uri` do rollbacku → inverse = ponowny apply backupu).
+Zaadoptowane jako wzorzec: `sheet`, `llm`, `github`, `webcam`, `mqtt`, `namecheap-dns`.
 
 > **Caveat konwencji URI (ksef):** odkrycie tras nie wystarcza, gdy URI łamią kształt
 > `noun/verb/action`. Trasy ksef (`ksef://{env}/auth/challenge`, `cert/enroll`,

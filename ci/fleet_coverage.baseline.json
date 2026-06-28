@@ -6,7 +6,6 @@
     "urirun-connector-camera-web",
     "urirun-connector-flow-repair",
     "urirun-connector-mcp-filesystem",
-    "urirun-connector-namecheap-dns",
     "urirun-connector-urifix",
     "urirun-connector-webnode"
   ]
