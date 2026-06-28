@@ -7,8 +7,8 @@ punktem zaczepienia do edycji, nie śmieciem. `scaffold_gaps` mówi, co człowie
 """
 from urirun_contract import Contract, conform
 from urirun_contract.contract_scaffold import (
-    contracts_from_manifest, contracts_from_routes, discover_routes,
-    effect_of, route_key, scaffold_gaps,
+    contracts_from_bindings, contracts_from_manifest, contracts_from_routes,
+    discover_routes, effect_of, route_key, routes_from_bindings, scaffold_gaps,
 )
 
 
@@ -88,3 +88,29 @@ def test_scaffold_conforms():
         {"message/command/send": [{"payload": {"to": "a@b", "body": "hi"}}]},
     )
     conform(_to_contracts(doc))  # nie rzuca = konformuje
+
+
+# ── connectory entry-point/deklaratywne (urirun_bindings, bez dekoratorów) ────
+def test_routes_from_bindings_extracts_route_keys():
+    bindings = {"bindings": {
+        "ksef://test/auth/challenge": {"kind": "command"},
+        "ksef://test/session/online/{ref}/send": {"examples": [{"payload": {"ref": "r1"}}]},
+    }}
+    assert routes_from_bindings(bindings) == [
+        "ksef://test/auth/challenge", "ksef://test/session/online/{ref}/send"]
+
+
+def test_contracts_from_bindings_scaffolds_and_conforms():
+    """Connector entry-point (0 dekoratorów, `urirun_bindings()` zwraca trasy o kształcie
+    noun/verb/action) jest teraz adoptowalny: szkielet z runtime'owych bindings KONFORMUJE,
+    więc wychodzi z 'NIEZNANE' bez przepisywania go na dekoratory."""
+    bindings = {"bindings": {
+        "data://host/records/query/search": {"examples": [{"payload": {"q": "x"}}]},
+        "data://host/record/command/upsert": {"examples": [{"payload": {"id": "1"}}]},
+    }}
+    doc = contracts_from_bindings(bindings)
+    assert set(doc["contracts"]) == {"records/query/search", "record/command/upsert"}
+    assert doc["contracts"]["record/command/upsert"]["effect"] == "command"   # czasownik → efekt
+    assert doc["contracts"]["records/query/search"]["effect"] == "query"
+    assert doc["contracts"]["record/command/upsert"]["inp"] == {"id": "str"}  # z przykładu
+    conform(_to_contracts(doc))  # szkielet jest poprawnym punktem startowym, nie śmieciem

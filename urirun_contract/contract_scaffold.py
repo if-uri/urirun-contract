@@ -110,6 +110,30 @@ def contracts_from_manifest(manifest: dict) -> dict:
     return contracts_from_routes(manifest.get("routes", []), by_route)
 
 
+def routes_from_bindings(bindings: dict) -> list[str]:
+    """Trasy z runtime'owego `urirun_bindings()` connectora. Dla connectorów, które budują bindings
+    PROGRAMOWO / deklaratywnie przez entry-point ``urirun.bindings`` (a nie dekoratorami
+    ``@conn.handler``, których szuka ``discover_routes``). Np. ``urirun-connector-ksef``: 0
+    dekoratorów, ale ``urirun_bindings()`` zwraca ~39 tras ``ksef://…`` — bez tego są „nieznane"."""
+    routes = bindings.get("bindings", bindings) if isinstance(bindings, dict) else bindings
+    return list(routes) if isinstance(routes, dict) else list(routes or [])
+
+
+def contracts_from_bindings(bindings: dict) -> dict:
+    """Runtime `urirun_bindings()` → szkielet neutralnego `contracts.json` (do uzupełnienia).
+    Most dla connectorów entry-point/deklaratywnych, których ``discover_routes`` (dekoratory) nie
+    widzi; przykłady z koperty bindingu trafiają do `inp`, reszta zostaje pusta (`scaffold_gaps`)."""
+    routes = bindings.get("bindings", bindings) if isinstance(bindings, dict) else bindings
+    by_route: dict[str, list[dict]] = {}
+    if isinstance(routes, dict):
+        for uri, spec in routes.items():
+            exs = spec.get("examples", []) if isinstance(spec, dict) else []
+            for ex in exs:
+                if isinstance(ex, dict):
+                    by_route.setdefault(route_key(uri), []).append(ex)
+    return contracts_from_routes(routes_from_bindings(bindings), by_route)
+
+
 def scaffold_gaps(contracts_doc: dict) -> list[str]:
     """Czego brakuje w szkielecie, żeby kontrakt był pełny (out, reversible-inverse, przykłady-result)."""
     gaps: list[str] = []
