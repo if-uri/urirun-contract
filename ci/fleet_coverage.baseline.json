@@ -3,9 +3,7 @@
     "urirun-connector-adb",
     "urirun-connector-browser-control",
     "urirun-connector-camera-web",
-    "urirun-connector-flow-repair",
     "urirun-connector-invoice",
-    "urirun-connector-urifix",
     "urirun-connector-webnode"
   ]
 }
