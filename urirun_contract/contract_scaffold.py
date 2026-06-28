@@ -57,18 +57,19 @@ def route_key(uri: str) -> str:
 
 
 def effect_of(route: str) -> str:
-    """Efekt z czasownika w trasie: ``command`` jeśli obecny, inaczej ``query``."""
-    segs = route.split("/")
-    if "command" in segs:
-        return "command"
-    return "query"
+    """Efekt zgodny z REGUŁĄ `conform` (gate.py): ``query`` wtedy i tylko wtedy, gdy `/query/` jest w
+    trasie; inaczej ``command``. conform asertuje ``("/query/" in route) == (effect == "query")``,
+    więc każda trasa bez `/query/` (także ksef `auth/challenge`, czasownik na końcu) jest commandem —
+    konserwatywnie traktowana jako mutująca. Domysł może być zbyt ostrożny dla odczytu bez `/query/`;
+    `effect_inferable` to wykrywa, a `scaffold_gaps` każe zweryfikować."""
+    return "query" if "/query/" in route else "command"
 
 
 def effect_inferable(route: str) -> bool:
-    """Czy efekt DA SIĘ wywnioskować z czasownika URI (`/command/` lub `/query/` w ścieżce). False =
-    URI łamie konwencję noun/verb/action (np. ksef `auth/challenge`, `cert/enroll` — czasownik na
-    końcu), więc `effect_of` ZGADUJE `query`, a `conform` (efekt↔czasownik) to odrzuci. `scaffold_gaps`
-    nagłaśnia to zamiast cicho przepuszczać zły domysł."""
+    """Czy efekt jest jednoznaczny z konwencji URI (`/command/` lub `/query/` w ścieżce). False =
+    URI łamie noun/verb/action (np. ksef `auth/challenge`, `cert/enroll` — czasownik na końcu): nadal
+    KONFORMUJE jako command (reguła conform „bez /query/ = command"), ale domysł command może być zbyt
+    ostrożny dla faktycznego odczytu. `scaffold_gaps` każe to zweryfikować zamiast cicho przepuścić."""
     segs = route.split("/")
     return "command" in segs or "query" in segs
 
@@ -148,9 +149,9 @@ def scaffold_gaps(contracts_doc: dict) -> list[str]:
     gaps: list[str] = []
     for route, c in contracts_doc.get("contracts", {}).items():
         if not effect_inferable(route):
-            gaps.append(f"{route}: efekt NIE wywnioskowany z URI (brak `/command/`//`/query/`) — "
-                        f"szkielet zgadł `{c.get('effect')}`; zadeklaruj efekt ręcznie "
-                        f"(conform odrzuci, dopóki URI łamie noun/verb/action)")
+            gaps.append(f"{route}: URI bez /command/ ani /query/ — efekt zdefaultowany na "
+                        f"`{c.get('effect')}` (reguła conform: bez /query/ = command); "
+                        f"zweryfikuj, czy to nie odczyt (wtedy potrzebny /query/ w URI)")
         if not c.get("out"):
             gaps.append(f"{route}: pusty `out` — uzupełnij kształt wyjścia")
         if c.get("effect") == "command" and not c.get("reversible"):

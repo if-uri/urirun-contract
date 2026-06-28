@@ -104,14 +104,15 @@ Connectory mutujące-odwracalne deklarują `reversible:true` + `inverseRoute` (n
 `records/command/apply` wymusza `backup_uri` do rollbacku → inverse = ponowny apply backupu).
 Zaadoptowane jako wzorzec: `sheet`, `llm`, `github`, `webcam`, `mqtt`, `namecheap-dns`.
 
-> **Caveat konwencji URI (ksef):** odkrycie tras nie wystarcza, gdy URI łamią kształt
-> `noun/verb/action`. Trasy ksef (`ksef://{env}/auth/challenge`, `cert/enroll`,
-> `session/online/{ref}/send` — czasownik na końcu, bez `/command/`//`/query/`) nie pozwalają
-> wywnioskować efektu z czasownika, a `conform` (efekt↔czasownik) je odrzuci. `effect_of` ZGADUJE
-> wtedy `query`, ale `effect_inferable(route)` to wykrywa i **`scaffold_gaps` NAGŁAŚNIA** („efekt
-> NIE wywnioskowany z URI — zadeklaruj ręcznie") zamiast cicho przepuścić zły domysł. ksef wymaga
-> decyzji: remap URI na konwencję albo rozszerzenie inferencji efektu o kształt „verb-na-końcu".
-> `scanner` jest poprawnie „nieznany" — to serwis/most (`urirun.services`), nie connector z bindings.
+> **Caveat konwencji URI (ksef):** trasy ksef (`ksef://{env}/auth/challenge`, `cert/enroll`,
+> `session/online/{ref}/send` — czasownik na końcu, bez `/command/`//`/query/`) łamią kształt
+> `noun/verb/action`. KLUCZ: reguła `conform` to `("/query/" in route) == (effect=="query")` — czyli
+> **każda trasa bez `/query/` jest commandem**, nie wymaga `/command/` w URI. `effect_of` jest z tym
+> zgodne (bez `/query/` → command), więc ksef SCAFFOLDUJE się do **konformującego** szkieletu (13
+> tras, 12 command / 1 query) — BEZ remapu URI. `effect_inferable(route)` wykrywa brak czasownika, a
+> `scaffold_gaps` każe ZWERYFIKOWAĆ zdefaultowany command (może to być odczyt → wtedy potrzebny
+> `/query/` w URI). `scanner` jest poprawnie „nieznany” — to serwis/most (`urirun.services`), nie
+> connector z bindings.
 
 ### Wersjonowanie additive-only (`contract_compat`)
 
