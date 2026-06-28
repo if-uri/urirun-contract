@@ -55,6 +55,7 @@ class Contract:
     inverse_route: str = ""                     # connector-local path, e.g. "window/command/restore"
     inp: dict = field(default_factory=dict)     # schema-subset of the payload
     out: dict = field(default_factory=dict)     # schema-subset of the ok-envelope (oneOf allowed)
+    domains: dict = field(default_factory=dict) # input param -> runtime domain declaration
     errors: tuple[str, ...] = ()                # RemediationClass values this route may emit
     examples: tuple[dict, ...] = ()             # golden {payload, result} — conformance fixtures
 
@@ -175,6 +176,8 @@ def contract_to_dict(c: Contract) -> dict:
         "version": c.version, "effect": c.effect, "reversible": c.reversible,
         "input": c.inp, "output": c.out, "errors": list(c.errors), "examples": list(c.examples),
     }
+    if c.domains:
+        d["domains"] = c.domains
     if c.reversible:
         d["inverseRoute"] = c.inverse_route
     return d

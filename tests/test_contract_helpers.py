@@ -1,4 +1,4 @@
-from urirun_contract import Contract, callspec_fields, lint_handler_signatures, to_json_schema
+from urirun_contract import Contract, callspec_fields, contract_to_dict, lint_handler_signatures, to_json_schema
 
 
 def test_to_json_schema_projects_contract_dialect():
@@ -49,3 +49,14 @@ def test_callspec_fields_derives_reversibility_from_contract():
     assert fields["mutates"] is True
     assert fields["reversible"] is True
     assert "inverse=fs://host/file/command/write" in fields["note"]
+
+
+def test_contract_to_dict_exports_env_domains():
+    c = Contract(
+        inp={"monitor": "?int"},
+        domains={"monitor": {"type": "enum", "domain": "env:monitors.id", "optional": True}},
+    )
+
+    d = contract_to_dict(c)
+
+    assert d["domains"]["monitor"]["domain"] == "env:monitors.id"

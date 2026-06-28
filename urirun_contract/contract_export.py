@@ -30,6 +30,7 @@ def neutral_document(contracts: dict, wires=()) -> dict:
                 "inverseRoute": (c.inverse_route or None),
                 "inp": c.inp,
                 "out": c.out,
+                "domains": getattr(c, "domains", {}) or {},
                 "errors": list(c.errors),
                 "examples": [dict(ex) for ex in c.examples],
             }
