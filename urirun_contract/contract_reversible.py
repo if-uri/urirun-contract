@@ -32,3 +32,22 @@ def callspecs_from_contracts(contracts: dict, *, conn_uri=None) -> list:
     from urirun_twin.reversible import CallSpec
 
     return [CallSpec(**callspec_fields(route, contract, conn_uri=conn_uri)) for route, contract in contracts.items()]
+
+
+def callspecs_from_bindings(bindings: dict, *, conn_uri=None) -> list:
+    """Build ``CallSpec`` objects from a COMPILED registry's bindings.
+
+    ``attach_contracts`` joins each route's contract onto its binding under ``meta.contract``
+    (carrying ``effect``/``reversible``/``inverseRoute``), so the compiled registry already holds
+    the reversibility truth. This is the registry→engine-schema bridge: any holder of the registry
+    (host flow execution, a connector's ``schema()``) derives the reversibility schema from the
+    contract — the single source — instead of a hand-maintained parallel table. Bindings without a
+    ``meta.contract`` are skipped (no contract = unknown, left to the fail-safe default)."""
+    from urirun_twin.reversible import CallSpec
+
+    specs = []
+    for uri, binding in (bindings or {}).items():
+        contract = ((binding or {}).get("meta") or {}).get("contract")
+        if isinstance(contract, dict):
+            specs.append(CallSpec(**callspec_fields(uri, contract, conn_uri=conn_uri)))
+    return specs

@@ -117,9 +117,11 @@ def test_contracts_from_bindings_scaffolds_and_conforms():
 
 
 def test_effect_of_matches_conform_rule():
-    """`effect_of` MUSI zgadzać się z regułą conform: query ⟺ `/query/` w trasie. Trasa bez `/query/`
-    (także ksef `auth/challenge`, czasownik na końcu) = command — i KONFORMUJE."""
+    """`effect_of` MUSI zgadzać się z regułą conform: query ⟺ segment `query` w trasie.
+    Trasa bez segmentu `query` (także ksef `auth/challenge`, czasownik na końcu) = command."""
     assert effect_of("inbox/query/list") == "query"
+    assert effect_of("query/eval") == "query"
+    assert effect_of("webnode://page/query/eval") == "query"
     assert effect_of("message/command/send") == "command"
     assert effect_of("auth/challenge") == "command"   # bez /query/ → command (nie query!)
     assert effect_of("cert/enroll") == "command"

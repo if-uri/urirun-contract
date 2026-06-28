@@ -146,7 +146,8 @@ def conform(contracts: dict[str, Contract]) -> None:
     """The CI oracle. Raises AssertionError on the first violation; returns None when all pass."""
     for route, c in contracts.items():
         assert c.effect in ("query", "command"), f"{route}: bad effect {c.effect!r}"
-        assert ("/query/" in route) == (c.effect == "query"), \
+        segments = [seg for seg in route.split("/") if seg and ":" not in seg]
+        assert ("query" in segments) == (c.effect == "query"), \
             f"{route}: effect {c.effect!r} contradicts the URI verb"
         if c.reversible:
             assert c.effect == "command", f"{route}: only commands can be reversible"
