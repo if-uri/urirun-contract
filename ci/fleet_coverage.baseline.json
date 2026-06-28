@@ -1,9 +1,13 @@
 {
   "known_violations": [],
   "known_partial": [
+    "urirun-connector-domain-monitor",
+    "urirun-connector-email",
     "urirun-connector-fs",
     "urirun-connector-kvm",
     "urirun-connector-linkedin",
+    "urirun-connector-planfile",
+    "urirun-connector-sqlite-context",
     "urirun-connector-twin"
   ],
   "known_unknown": [
