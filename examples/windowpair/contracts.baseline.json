@@ -21,7 +21,7 @@
         }
       },
       "errors": [
-        "cdp-unreachable"
+        "degraded-backend"
       ],
       "examples": [
         {
@@ -76,8 +76,8 @@
         }
       },
       "errors": [
-        "cdp-unreachable",
-        "snapshot-url-missing"
+        "degraded-backend",
+        "precondition-unmet"
       ],
       "examples": [
         {

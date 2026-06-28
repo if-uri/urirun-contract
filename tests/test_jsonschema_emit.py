@@ -53,9 +53,11 @@ def test_golden_examples_validate_against_schema(route):
 
 
 def test_optional_field_is_not_required():
-    # inp {"id": "?str"} → pole opcjonalne, brak w required, pusty payload waliduje
+    # inp {"id": "?str"} → pole opcjonalne i nullable; brak w required, null waliduje
     doc = to_json_schema("?str")
-    assert doc == {"type": "string"}
+    assert doc == {"anyOf": [{"type": "null"}, {"type": "string"}]}
     in_schema = to_json_schema_document("window/command/close", {"id": "?str"}, kind="input")
     assert "required" not in in_schema
     jsonschema.validate({}, in_schema)
+    jsonschema.validate({"id": None}, in_schema)
+    jsonschema.validate({"id": "active"}, in_schema)

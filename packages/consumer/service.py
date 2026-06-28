@@ -57,7 +57,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._err(422, f"input violates {ROUTE}: {exc}")
         snap = payload.get("snapshot") or {}
         if not snap.get("url"):
-            return self._err(422, "snapshot.url required (remediation: snapshot-url-missing)")
+            return self._err(422, "snapshot.url required (remediation: precondition-unmet)")
         env = restore_handler(snap)
         try:
             check(C.out, env, "out")

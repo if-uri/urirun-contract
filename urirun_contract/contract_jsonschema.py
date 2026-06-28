@@ -30,7 +30,7 @@ def _dict_schema(dialect: dict) -> dict:
     required: list[str] = []
     for key, spec in dialect.items():
         optional = isinstance(spec, str) and spec.startswith("?")
-        props[key] = to_json_schema(spec[1:] if optional else spec)
+        props[key] = to_json_schema(spec)
         if not optional:
             required.append(key)
     schema: dict[str, Any] = {"type": "object", "properties": props}
@@ -40,6 +40,11 @@ def _dict_schema(dialect: dict) -> dict:
 
 
 def _token_schema(tok: str) -> dict:
+    if tok.startswith("?"):
+        inner = to_json_schema(tok[1:])
+        if inner == {}:
+            return {}
+        return {"anyOf": [{"type": "null"}, inner]}
     if tok.startswith("const:"):
         return {"const": _const_value(tok[len("const:"):])}
     if tok.startswith("enum:"):
@@ -57,8 +62,7 @@ def to_json_schema(dialect: Any) -> dict:
         return _dict_schema(dialect)
     if isinstance(dialect, list):
         return {"type": "array", "items": to_json_schema(dialect[0])} if dialect else {"type": "array"}
-    tok = dialect[1:] if isinstance(dialect, str) and dialect.startswith("?") else dialect
-    return _token_schema(tok) if isinstance(tok, str) else {}
+    return _token_schema(dialect) if isinstance(dialect, str) else {}
 
 
 _DRAFT = "https://json-schema.org/draft/2020-12/schema"

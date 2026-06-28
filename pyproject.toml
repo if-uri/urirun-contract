@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-urirun = ["urirun>=0.4"]
+urirun = ["urirun>=0.4.190"]
 dev = ["pytest>=7", "radon", "jsonschema", "build", "twine"]
 
 [project.urls]
