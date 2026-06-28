@@ -51,7 +51,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `contract_gate` / `gate` | `check`, `enforce`, `conform`, `check_wire`, `wire_payload`, `consumer_input_check` |
 | `codegen` | `py_stub`/`js_stub`/`go_stub`, `emit_py_module` |
 | `contract_lint` | `lint_handler_signatures` — handler bez kontraktu / sygnatura != generowana |
-| `contract_reversible` | `callspecs_from_contracts` → most `urirun_twin.reversible.schema_from_contracts`: kontrakt jako schemat odwracalności silnika (strategia #3, `Connector.schema()` zwraca to zamiast ręcznych CallSpec). **Runtime ledger nadal jedzie konwencją „inverse w wyniku" (#2)**; most udowodniony end-to-end (`test_reversible.py::test_contract_derived_schema_drives_the_engine_invariant`) |
+| `contract_reversible` | `callspecs_from_contracts` (z dict kontraktów) + `callspecs_from_bindings` (z `meta.contract` skompilowanego rejestru) → mosty `urirun_twin.reversible.schema_from_contracts` / `schema_from_bindings`: kontrakt jako schemat odwracalności silnika (strategia #3, `Connector.schema()` zwraca to zamiast ręcznych CallSpec). **Runtime ledger nadal jedzie konwencją „inverse w wyniku" (#2)**; mosty udowodnione testem (`test_reversible.py`) |
 | `contract_jsonschema` | `to_json_schema` — eksport do standardowego JSON Schema |
 | `contract_export` | `neutral_document`/`schema_document`/`write_artifacts` — neutralny JSON + JSON Schema + TS |
 | `contract_typescript` | `to_typescript` — mini-schemat kontraktu → typy TypeScript |
@@ -78,7 +78,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 
 ### Adopcja floty (`contract_scaffold` + `fleet_coverage`)
 
-~37 konektorów, kontrakt ma 14 (i rośnie) — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
+~37 konektorów, kontrakt ma 17 (i rośnie) — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
 `contract_scaffold.contracts_from_manifest`/`contracts_from_routes` buduje szkielet `contracts.json`
 z tras connectora. Trasy odkrywane z TRZECH źródeł: `discover_routes` (dekoratory `@conn.handler/
 command/query` w `core.py` — źródło prawdy connectorów Python) + `connector.manifest.json` +
@@ -102,7 +102,10 @@ między gałęziami → `?opcjonalne` albo `{"oneOf":[…]}`. Każdy adoptowany 
 + „każda trasa `@conn.handler` (po `route_key`) ma wpis w `contracts.json`" — to anti-dryf deklaracja↔kod.
 Connectory mutujące-odwracalne deklarują `reversible:true` + `inverseRoute` (np. `namecheap-dns`
 `records/command/apply` wymusza `backup_uri` do rollbacku → inverse = ponowny apply backupu).
-Zaadoptowane jako wzorzec: `sheet`, `llm`, `github`, `webcam`, `mqtt`, `namecheap-dns`.
+Zaadoptowane jako wzorzec: `sheet`, `llm`, `github`, `webcam`, `mqtt`, `namecheap-dns` (apply
+odwracalny), `camera` (tag), `adb`, `mcp-filesystem` (move/move_to_dir odwracalne via inverse=move).
+Errors używają KANONICZNYCH `RemediationClass` (`urirun_contracts`: `unreachable`/`unauthenticated`/
+`route-missing`/`version-skew`/`degraded-backend`/`precondition-unmet`/`no-node-url`/`unknown`).
 
 > **Caveat konwencji URI (ksef):** trasy ksef (`ksef://{env}/auth/challenge`, `cert/enroll`,
 > `session/online/{ref}/send` — czasownik na końcu, bez `/command/`//`/query/`) łamią kształt
@@ -113,6 +116,17 @@ Zaadoptowane jako wzorzec: `sheet`, `llm`, `github`, `webcam`, `mqtt`, `namechea
 > `scaffold_gaps` każe ZWERYFIKOWAĆ zdefaultowany command (może to być odczyt → wtedy potrzebny
 > `/query/` w URI). `scanner` jest poprawnie „nieznany” — to serwis/most (`urirun.services`), nie
 > connector z bindings.
+
+> **Caveat trasy verb-first (webnode) — BLOKADA, do naprawy w `conform`:** connector z
+> `target=` i krótkimi trasami handlera, gdzie czasownik jest PIERWSZY (`@PAGE.handler("query/eval")`,
+> `"command/navigate"`), wpada w lukę `conform`. Reguła `("/query/" in route)` wymaga `/query/` ze
+> SLASHAMI po obu stronach; `"query/eval"` ma `query/` na początku → `False` → `conform` żąda
+> `effect != query`, choć `eval` to ODCZYT. Trasy command verb-first przechodzą (brak `/query/` =
+> command, zgodne), ale **query verb-first są odrzucane**. To NIE ksef (tam czasownika brak; tu
+> czasownik jest, ale na początku). webnode (BROWSER `noun/verb/action` OK + PAGE `verb/action`
+> blokowane na 4 trasach query) **odłożony** — nie fałszujemy efektu. Naprawa: `conform` powinien
+> rozpoznać czasownik też jako PIERWSZY segment (`route.split("/")[0] in {"query","command"}`), nie
+> tylko jako `/query/` w środku — wtedy webnode adoptuje się wiernie.
 
 ### Wersjonowanie additive-only (`contract_compat`)
 
@@ -189,14 +203,18 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 3. `contracts.json` przy korzeniu `urirun-contract` usunięty — kanoniczny egzemplarz
    w `examples/windowpair/contracts.json`.
 
-4. **Odwracalność: most jest, produkcja jeszcze nie.** `schema_from_contracts` (strategia #3)
-   jest błogosławiony i udowodniony testem (`test_reversible.py`), ale ŻADEN produkcyjny
-   `Connector.schema()` go nie woła, a twin planner (`urirun-connector-twin`,
-   `urirun_connector_twin/planner.py`) nadal wyznacza odwracalność z ręcznej tablicy
-   `_REVERSIBLE_TABLE` — równoległa deklaracja, której niezmiennik #3 zabrania. Domknięcie wymaga
-   rejestru kontraktów niosącego `reversible`/`inverseRoute` (dziś `attach_contracts` wystawia
-   `effect`/`errors`/`outputSchema`, nie odwracalność), z którego planner i konektory czytałyby
-   zamiast tablicy. Runtime ledger nadal poprawnie jedzie konwencją „inverse w wyniku" (#2).
+4. **Odwracalność: mosty są, ostatni konsument jeszcze nie.** Rejestr JUŻ niesie odwracalność —
+   `attach_contracts` dokleja CAŁY kontrakt (`contract_to_dict`: `effect`/`reversible`/`inverseRoute`)
+   pod `binding.meta.contract`. Schemat odwracalności silnika można więc zbudować z kontraktu
+   dwoma drogami, obie błogosławione i udowodnione testem (`test_reversible.py`):
+   `schema_from_contracts(contracts)` i `schema_from_bindings(bindings)` (most rejestr→schemat,
+   czyta `meta.contract`). Twin planner jest już CONTRACT-AWARE: `annotate_steps`/`_step_reversible`
+   (`urirun-connector-twin`) przyjmują opcjonalny `route_contracts` (URI→`meta.contract`) i — gdy
+   jest — kontrakt WYGRYWA z `_REVERSIBLE_TABLE`; tablica zostaje fallbackiem dla tras bez kontraktu
+   (29/37 floty — usunięcie jej zregresowałoby je do „unknown"). Pozostała luka jest już tylko
+   WIRINGOWA: host nie przekazuje jeszcze `route_contracts` (z `meta.contract` skompilowanego
+   rejestru) w wywołaniu `twin://host/plan/command/generate`. Żaden produkcyjny `Connector.schema()`
+   też jeszcze nie woła mostów. Runtime ledger poprawnie jedzie konwencją „inverse w wyniku" (#2).
 
 5. **Bramy egzekucji żyją w `urirun-contract`, nie w monorepo `urirun`.** `check_single_source` /
    regen-check / `lint_handler_signatures` siedzą w `make check` + CI + pre-commit TEGO repo. W

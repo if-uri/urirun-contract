@@ -5,7 +5,6 @@
     "urirun-connector-camera-web",
     "urirun-connector-flow-repair",
     "urirun-connector-invoice",
-    "urirun-connector-mcp-filesystem",
     "urirun-connector-urifix",
     "urirun-connector-webnode"
   ]
