@@ -2,7 +2,6 @@
   "known_violations": [
     "urirun-connector-adb",
     "urirun-connector-browser-control",
-    "urirun-connector-camera",
     "urirun-connector-camera-web",
     "urirun-connector-flow-repair",
     "urirun-connector-mcp-filesystem",
