@@ -52,7 +52,9 @@ lint: ## CC gate (radon -n D)
 	radon cc -n D urirun_contract/
 
 docs: ## Doc-health: docval wykrywa nieaktualne/zepsute/sieroce sekcje (semcod/docval; skip gdy brak)
-	@command -v docval >/dev/null 2>&1 && docval scan . || echo "docval niedostępny — pip install docval (semcod) by sprawdzić doc-health"
+	@command -v docval >/dev/null 2>&1 \
+	  && docval scan . -e target -e node_modules -e .venv -e venv -e dist -e build -e __pycache__ \
+	  || echo "docval niedostępny — pip install docval (semcod) by sprawdzić doc-health"
 
 single-source: ## CI: kernel (gate/codegen) zdefiniowany w JEDNYM miejscu; reszta to re-eksport
 	$(PY) -m urirun_contract.check_single_source .
