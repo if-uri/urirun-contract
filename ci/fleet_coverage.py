@@ -88,25 +88,31 @@ def _contract_keys(conn_dir: str) -> set[str]:
             keys |= set(json.load(open(cj)).get("contracts", {}))
         except (OSError, ValueError):
             pass
-    if _src_files(conn_dir, "contracts.py"):
-        pkg = os.path.basename(conn_dir).replace("urirun-connector-", "urirun_connector_").replace("-", "_")
+    for cp in _src_files(conn_dir, "contracts.py"):
+        # Load the contracts.py FILE directly (not `import {pkg}.contracts`): importing the package
+        # pulls its __init__ → core → connector deps, which usually FAIL in this venv and silently
+        # zeroed the keys → false "partial". The file only needs urirun_connectors_toolkit on the path.
         try:
-            import importlib
-            keys |= set(getattr(importlib.import_module(f"{pkg}.contracts"), "CONTRACTS", {}) or {})
-        except Exception:  # noqa: BLE001 - lint nie wywala się na nieimportowalnym connectorze
+            import importlib.util
+            tk = os.path.join(os.path.dirname(os.path.abspath(conn_dir)), "urirun", "adapters", "python")
+            if os.path.isdir(tk) and tk not in sys.path:
+                sys.path.insert(0, tk)
+            spec = importlib.util.spec_from_file_location("_fleet_contracts", cp)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            keys |= set(getattr(mod, "CONTRACTS", {}) or {})
+        except Exception:  # noqa: BLE001 - a contract we cannot load just isn't counted
             pass
     return keys
 
 
 def _norm(route: str) -> set[str]:
-    """Formy porównawcze trasy odporne na schemat kluczowania (pełny URI vs route_key): sama trasa,
-    `route_key`, oraz ostatnie 2 segmenty (verb/action) — żeby dopasować mimo różnic w prefiksie."""
-    forms = {route, route_key(route)}
-    for r in (route, route_key(route)):
-        parts = [p for p in r.split("/") if p]
-        if len(parts) >= 2:
-            forms.add("/".join(parts[-2:]))
-    return forms
+    """Formy porównawcze trasy odporne na schemat kluczowania: pełny URI i `route_key`.
+
+    Nie dopasowujemy już samych ostatnich segmentów (`command/click`), bo to maskuje różne
+    semantycznie trasy takie jak `abs/command/click`, `input/command/click` i `ui/command/click`.
+    """
+    return {route, route_key(route)}
 
 
 def _uncovered_mutating(mutating: list[str], contract_keys: set[str]) -> list[str]:
