@@ -102,13 +102,43 @@ def test_full_route_coverage_is_not_partial(tmp_path):
 
 
 def test_partial_match_tolerates_full_uri_contract_keys(tmp_path):
-    """Kontrakt keyed PEŁNYM URI (browser-control/webnode) pasuje do trasy route_key — bez fałszywego braku."""
+    """Kontrakt keyed PEŁNYM URI (target + path) pasuje do handler route_key."""
     _connector_with_contract(
         tmp_path, "urirun-connector-webnode",
-        '@conn.command("page/command/navigate")\ndef n(): ...\n',
+        '@conn.command("command/navigate")\ndef n(): ...\n',
         {"webnode://page/command/navigate": {"effect": "command"}},
     )
     assert fc.scan(str(tmp_path))["partial"] == []
+
+
+def test_suffix_only_match_does_not_hide_distinct_routes(tmp_path):
+    """`*/command/click` routes are not interchangeable at route-level coverage."""
+    _connector_with_contract(
+        tmp_path, "urirun-connector-kvm",
+        '@conn.command("abs/command/click")\ndef a(): ...\n'
+        '@conn.command("input/command/click")\ndef i(): ...\n',
+        {"abs/command/click": {"effect": "command"}},
+    )
+    partial = fc.scan(str(tmp_path))["partial"]
+    assert partial[0]["name"] == "urirun-connector-kvm"
+    assert partial[0]["uncovered_mutating"] == ["input/command/click"]
+
+
+def test_contracts_py_is_read_by_file_not_package_import(tmp_path):
+    """REGRESSION: a contracts.py keyed by full URIs must be read by FILE, not `import {pkg}.contracts`.
+
+    The connector package is not importable in this venv (no install), so package-import zeroed the
+    keys → every mutating route looked uncovered → FALSE 'partial'. _contract_keys loads the file."""
+    d = tmp_path / "urirun-connector-domain-monitor"
+    pkg = d / "urirun_connector_domain_monitor"
+    pkg.mkdir(parents=True)
+    (pkg / "core.py").write_text('@BROWSER.command("page/command/screenshot")\ndef s(): ...\n')
+    # full-URI keyed CONTRACTS, plain dict (no toolkit import needed — only keys are read)
+    (pkg / "contracts.py").write_text(
+        'CONTRACTS = {"browser://host/page/command/screenshot": {"effect": "command"}}\n')
+    rep = fc.scan(str(tmp_path))
+    assert rep["with_contract"] == 1
+    assert rep["partial"] == []          # the contract DOES cover the mutating route — not partial
 
 
 def test_partial_ratchet_only_flags_new_partials(tmp_path):
