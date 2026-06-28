@@ -80,16 +80,25 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 
 ~37 konektorów, kontrakt ma 8 — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
 `contract_scaffold.contracts_from_manifest`/`contracts_from_routes` buduje szkielet `contracts.json`
-z tras connectora. Trasy odkrywane z DWÓCH źródeł: `discover_routes` (dekoratory `@conn.handler/
-command/query` w `core.py` — źródło prawdy connectorów Python) + `connector.manifest.json`. Efekt z
-czasownika trasy, wejście wywnioskowane z przykładów; `out`/`reversible`/`errors` zostają puste —
-`scaffold_gaps` mówi, co człowiek/LLM ma dopisać. Szkielet KONFORMUJE od razu (poprawny punkt
-startowy, nie śmieć). `ci/fleet_coverage.py` raportuje pokrycie i NAZYWA konektory z trasą mutującą
-(`/command/`) bez kontraktu. Domyślny tor używa `ci/fleet_coverage.baseline.json` jako ratchetu:
-obecne braki są jawne, ale nowy mutujący connector bez kontraktu failuje pre-commit/CI. `--strict`
-failuje na wszystkie braki i jest celem po domknięciu adopcji. Konektor bez wykrywalnych tras jest
-raportowany JAWNIE jako „nieznany", nie cicho przepuszczany. `make scaffold CONN=...` /
-`make fleet-coverage`.
+z tras connectora. Trasy odkrywane z TRZECH źródeł: `discover_routes` (dekoratory `@conn.handler/
+command/query` w `core.py` — źródło prawdy connectorów Python) + `connector.manifest.json` +
+`contracts_from_bindings`/`routes_from_bindings` (runtime `urirun_bindings()` przez entry-point
+`urirun.bindings` — dla connectorów budujących bindings PROGRAMOWO/deklaratywnie, bez dekoratorów;
+np. `ksef` ma 0 dekoratorów, ale `urirun_bindings()` zwraca ~39 tras). Efekt z czasownika trasy,
+wejście wywnioskowane z przykładów; `out`/`reversible`/`errors` zostają puste — `scaffold_gaps`
+mówi, co człowiek/LLM ma dopisać. Szkielet KONFORMUJE od razu (poprawny punkt startowy, nie śmieć).
+`ci/fleet_coverage.py` raportuje pokrycie i NAZYWA konektory z trasą mutującą (`/command/`) bez
+kontraktu. Domyślny tor używa `ci/fleet_coverage.baseline.json` jako ratchetu: obecne braki są
+jawne, ale nowy mutujący connector bez kontraktu failuje pre-commit/CI. `--strict` failuje na
+wszystkie braki i jest celem po domknięciu adopcji. Konektor bez wykrywalnych tras jest raportowany
+JAWNIE jako „nieznany", nie cicho przepuszczany. `make scaffold CONN=...` / `make fleet-coverage`.
+
+> **Caveat konwencji URI (ksef):** odkrycie tras nie wystarcza, gdy URI łamią kształt
+> `noun/verb/action`. Trasy ksef (`ksef://{env}/auth/challenge`, `cert/enroll`,
+> `session/online/{ref}/send` — czasownik na końcu, bez `/command/`//`/query/`) nie pozwalają
+> wywnioskować efektu z czasownika, a `conform` (efekt↔czasownik) je odrzuci. ksef wymaga decyzji:
+> remap URI na konwencję albo rozszerzenie inferencji efektu o kształt „verb-na-końcu". `scanner`
+> jest poprawnie „nieznany" — to serwis/most (`urirun.services`), nie connector z bindings.
 
 ### Wersjonowanie additive-only (`contract_compat`)
 
@@ -165,6 +174,21 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 
 3. `contracts.json` przy korzeniu `urirun-contract` usunięty — kanoniczny egzemplarz
    w `examples/windowpair/contracts.json`.
+
+4. **Odwracalność: most jest, produkcja jeszcze nie.** `schema_from_contracts` (strategia #3)
+   jest błogosławiony i udowodniony testem (`test_reversible.py`), ale ŻADEN produkcyjny
+   `Connector.schema()` go nie woła, a twin planner (`urirun-connector-twin`,
+   `urirun_connector_twin/planner.py`) nadal wyznacza odwracalność z ręcznej tablicy
+   `_REVERSIBLE_TABLE` — równoległa deklaracja, której niezmiennik #3 zabrania. Domknięcie wymaga
+   rejestru kontraktów niosącego `reversible`/`inverseRoute` (dziś `attach_contracts` wystawia
+   `effect`/`errors`/`outputSchema`, nie odwracalność), z którego planner i konektory czytałyby
+   zamiast tablicy. Runtime ledger nadal poprawnie jedzie konwencją „inverse w wyniku" (#2).
+
+5. **Bramy egzekucji żyją w `urirun-contract`, nie w monorepo `urirun`.** `check_single_source` /
+   regen-check / `lint_handler_signatures` siedzą w `make check` + CI + pre-commit TEGO repo. W
+   monorepo `urirun` nie ma `make check` ani flota-lintu na trasy mutujące bez `contracts.py` —
+   konektory tam (kvm itd.) nie są bramkowane. (Pokrycie floty jest ratchetowane osobno:
+   `fleet_coverage.py`, 8/37 z kontraktem.)
 
 ## Roadmap
 
