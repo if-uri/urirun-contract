@@ -3,14 +3,17 @@
 """Skanuje katalog z konektorami (`urirun-connector-*`) i raportuje pokrycie kontraktami.
 Connector z trasą MUTUJĄCĄ (`/command/`) BEZ kontraktu = naruszenie (z `--strict` → exit 1).
 
-Trasy odkrywane z DWÓCH źródeł: dekoratory `@conn.handler/command/query` w kodzie (źródło
-prawdy dla connectorów Python) ORAZ `routes` w `connector.manifest.json`. Connector bez żadnej
-wykrywalnej trasy jest raportowany JAWNIE jako „nieznany" — nie cicho przepuszczany (to byłaby
-fałszywa zieleń). Kontrakt = `contracts.py`/`contracts.json` poza venv/.git.
+Trasy odkrywane z TRZECH źródeł: dekoratory `@conn.handler/command/query` w kodzie (źródło prawdy
+dla connectorów Python), `routes` w `connector.manifest.json`, ORAZ — gdy oba zawiodą — runtime
+`urirun_bindings()` przez entry-point `urirun.bindings` (connectory budujące bindings PROGRAMOWO,
+np. ksef: 0 dekoratorów, ~39 tras). Connector bez ŻADNEJ wykrywalnej trasy (np. biblioteka bez
+powierzchni URI, jak scanner) jest raportowany JAWNIE jako „nieznany" — nie cicho przepuszczany (to
+byłaby fałszywa zieleń); świadome wyjątki idą do `known_unknown` w baseline. Kontrakt =
+`contracts.py`/`contracts.json` poza venv/.git.
 
   python ci/fleet_coverage.py <root>                         # raport (exit 0)
   python ci/fleet_coverage.py <root> --strict                # exit 1 jeśli mutujący bez kontraktu
-  python ci/fleet_coverage.py <root> --baseline known.json   # exit 1 tylko na nowe braki
+  python ci/fleet_coverage.py <root> --baseline known.json   # exit 1 tylko na nowe braki/unknown
 """
 from __future__ import annotations
 
@@ -22,9 +25,48 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from urirun_contract.contract_scaffold import discover_routes, effect_of, route_key  # noqa: E402
+from urirun_contract.contract_scaffold import (  # noqa: E402
+    discover_routes, effect_of, route_key, routes_from_bindings,
+)
 
 _SKIP = ("/venv/", "/.git/", "/__pycache__/", "/node_modules/", "/build/", "/dist/")
+
+
+def _entry_point_targets(conn_dir: str, group: str) -> list[str]:
+    """Cele entry-pointów z grupy (np. `urirun.bindings`) z pyproject.toml — STATYCZNIE, bez importu.
+    Pozwala odróżnić connector z bindings (ksef) od serwisu (`urirun.services`, np. scanner)."""
+    try:
+        import tomllib
+    except ModuleNotFoundError:  # pragma: no cover - py<3.11
+        return []
+    out: list[str] = []
+    for pp in _src_files(conn_dir, "pyproject.toml"):
+        try:
+            data = tomllib.load(open(pp, "rb"))
+        except (OSError, ValueError):
+            continue
+        eps = data.get("project", {}).get("entry-points", {}).get(group, {})
+        out.extend(str(v) for v in eps.values())
+    return out
+
+
+def _bindings_routes(conn_dir: str) -> list[str]:
+    """Trzecie źródło tras: runtime `urirun_bindings()` przez entry-point `urirun.bindings`. Dla
+    connectorów budujących bindings PROGRAMOWO/deklaratywnie (np. ksef: 0 dekoratorów, ~39 tras),
+    których `discover_routes` (dekoratory) nie widzi. Import jest STRZEŻONY — lint nie wywala się na
+    connectorze, którego zależności nie są zainstalowane (zwraca [] i trasa zostaje „nieznana")."""
+    import importlib
+    found: list[str] = []
+    for target in _entry_point_targets(conn_dir, "urirun.bindings"):
+        mod_name, _, func = target.partition(":")
+        try:
+            mod = importlib.import_module(mod_name)
+            fn = getattr(mod, func or "urirun_bindings", None)
+            if callable(fn):
+                found.extend(route_key(r) for r in routes_from_bindings(fn()))
+        except Exception:  # noqa: BLE001 - a lint tool must not crash on an unimportable connector
+            continue
+    return found
 
 
 def _src_files(conn_dir: str, pattern: str) -> list[str]:
@@ -45,13 +87,17 @@ def _routes(conn_dir: str) -> list[str]:
                 found.setdefault(r, None)
         except OSError:
             pass
-    mani = os.path.join(conn_dir, "connector.manifest.json")
-    if os.path.exists(mani):
+    for mani in _src_files(conn_dir, "connector.manifest.json"):
         try:
             for r in json.load(open(mani)).get("routes", []):
                 found.setdefault(route_key(r), None)
         except (OSError, ValueError):
             pass
+    # Trzecie źródło — TYLKO gdy statyczne nic nie dało (efektywność: importujemy connector tylko
+    # gdy inaczej byłby „nieznany"). Łapie ksef-klasę (programmatic `urirun_bindings()`).
+    if not found:
+        for r in _bindings_routes(conn_dir):
+            found.setdefault(r, None)
     return list(found)
 
 
@@ -81,16 +127,32 @@ def _arg_value(argv: list[str], name: str) -> str | None:
     return None
 
 
-def _baseline_names(path: str | None) -> set[str]:
+def _baseline_doc(path: str | None) -> dict:
     if not path or not os.path.exists(path):
-        return set()
+        return {}
     doc = json.load(open(path))
+    if isinstance(doc, list):
+        return {"known_violations": doc}
+    return doc if isinstance(doc, dict) else {}
+
+
+def _baseline_names(doc_or_path: dict | str | None) -> set[str]:
+    doc = _baseline_doc(doc_or_path) if not isinstance(doc_or_path, dict) else doc_or_path
     raw = doc.get("known_violations", doc if isinstance(doc, list) else [])
     return {str(item) for item in raw}
 
 
+def _baseline_unknown_names(doc_or_path: dict | str | None) -> set[str]:
+    doc = _baseline_doc(doc_or_path) if not isinstance(doc_or_path, dict) else doc_or_path
+    return {str(item) for item in doc.get("known_unknown", [])}
+
+
 def new_violations(rep: dict, known: set[str]) -> list[dict]:
     return [r for r in rep["violations"] if r["name"] not in known]
+
+
+def new_unknown(rep: dict, known: set[str]) -> list[dict]:
+    return [r for r in rep["unknown"] if r["name"] not in known]
 
 
 def main(argv: list[str]) -> int:
@@ -100,8 +162,12 @@ def main(argv: list[str]) -> int:
             if not a.startswith("--") and a != (baseline_path or "")]
     root = args[0] if args else os.path.dirname(ROOT)  # domyślnie monorepo if-uri
     rep = scan(root)
-    known = _baseline_names(baseline_path)
+    baseline = _baseline_doc(baseline_path)
+    known = _baseline_names(baseline)
+    known_unknown = _baseline_unknown_names(baseline)
     new = new_violations(rep, known)
+    unknown_new = new_unknown(rep, known_unknown)
+    unknown_known = [r for r in rep["unknown"] if r["name"] in known_unknown]
 
     print(f"Pokrycie floty: {rep['with_contract']}/{rep['total']} konektorów ma kontrakt")
     if rep["violations"]:
@@ -112,19 +178,28 @@ def main(argv: list[str]) -> int:
     else:
         print("  (brak mutujących bez kontraktu)")
     if baseline_path:
-        print(f"\nBaseline: {len(known)} znanych braków ({baseline_path})")
+        print(f"\nBaseline: {len(known)} znanych braków, {len(known_unknown)} znanych unknown ({baseline_path})")
         if new:
             print(f"NOWE BRAKI ({len(new)}):")
             for r in new:
                 print(f"  ✗ {r['name']}")
         else:
             print("  brak nowych braków względem baseline")
-    if rep["unknown"]:
-        print(f"\nNIEZNANE ({len(rep['unknown'])}) — brak wykrywalnych tras i kontraktu (nie oceniam):")
-        print("  " + ", ".join(r["name"] for r in rep["unknown"]))
+        if unknown_new:
+            print(f"NOWE NIEZNANE ({len(unknown_new)}):")
+            for r in unknown_new:
+                print(f"  ? {r['name']}")
+        else:
+            print("  brak nowych unknown względem baseline")
+    if unknown_new:
+        print(f"\nNIEZNANE ({len(unknown_new)}) — brak wykrywalnych tras i kontraktu (nie oceniam):")
+        print("  " + ", ".join(r["name"] for r in unknown_new))
+    if unknown_known:
+        print(f"\nZNANE BEZ POWIERZCHNI URI ({len(unknown_known)}) — świadomie poza fleet coverage:")
+        print("  " + ", ".join(r["name"] for r in unknown_known))
     if strict and rep["violations"]:
         return 1
-    if baseline_path and new:
+    if baseline_path and (new or unknown_new):
         return 1
     return 0
 
