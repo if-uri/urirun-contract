@@ -5,8 +5,6 @@
     "urirun-connector-camera",
     "urirun-connector-camera-web",
     "urirun-connector-flow-repair",
-    "urirun-connector-github",
-    "urirun-connector-llm",
     "urirun-connector-mcp-filesystem",
     "urirun-connector-mqtt",
     "urirun-connector-namecheap-dns",
