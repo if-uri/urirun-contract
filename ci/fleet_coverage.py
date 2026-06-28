@@ -8,8 +8,9 @@ prawdy dla connectorów Python) ORAZ `routes` w `connector.manifest.json`. Conne
 wykrywalnej trasy jest raportowany JAWNIE jako „nieznany" — nie cicho przepuszczany (to byłaby
 fałszywa zieleń). Kontrakt = `contracts.py`/`contracts.json` poza venv/.git.
 
-  python ci/fleet_coverage.py <root>           # raport (exit 0)
-  python ci/fleet_coverage.py <root> --strict  # exit 1 jeśli mutujący bez kontraktu
+  python ci/fleet_coverage.py <root>                         # raport (exit 0)
+  python ci/fleet_coverage.py <root> --strict                # exit 1 jeśli mutujący bez kontraktu
+  python ci/fleet_coverage.py <root> --baseline known.json   # exit 1 tylko na nowe braki
 """
 from __future__ import annotations
 
@@ -71,11 +72,36 @@ def scan(root: str) -> dict:
             "unknown": [r for r in rows if r["unknown"]], "rows": rows}
 
 
+def _arg_value(argv: list[str], name: str) -> str | None:
+    for i, item in enumerate(argv):
+        if item == name and i + 1 < len(argv):
+            return argv[i + 1]
+        if item.startswith(name + "="):
+            return item.split("=", 1)[1]
+    return None
+
+
+def _baseline_names(path: str | None) -> set[str]:
+    if not path or not os.path.exists(path):
+        return set()
+    doc = json.load(open(path))
+    raw = doc.get("known_violations", doc if isinstance(doc, list) else [])
+    return {str(item) for item in raw}
+
+
+def new_violations(rep: dict, known: set[str]) -> list[dict]:
+    return [r for r in rep["violations"] if r["name"] not in known]
+
+
 def main(argv: list[str]) -> int:
     strict = "--strict" in argv
-    args = [a for a in argv if not a.startswith("--")]
+    baseline_path = _arg_value(argv, "--baseline")
+    args = [a for a in argv
+            if not a.startswith("--") and a != (baseline_path or "")]
     root = args[0] if args else os.path.dirname(ROOT)  # domyślnie monorepo if-uri
     rep = scan(root)
+    known = _baseline_names(baseline_path)
+    new = new_violations(rep, known)
 
     print(f"Pokrycie floty: {rep['with_contract']}/{rep['total']} konektorów ma kontrakt")
     if rep["violations"]:
@@ -85,10 +111,22 @@ def main(argv: list[str]) -> int:
         print("  → wygeneruj szkielet: `python ci/scaffold_contract.py <connector>`")
     else:
         print("  (brak mutujących bez kontraktu)")
+    if baseline_path:
+        print(f"\nBaseline: {len(known)} znanych braków ({baseline_path})")
+        if new:
+            print(f"NOWE BRAKI ({len(new)}):")
+            for r in new:
+                print(f"  ✗ {r['name']}")
+        else:
+            print("  brak nowych braków względem baseline")
     if rep["unknown"]:
         print(f"\nNIEZNANE ({len(rep['unknown'])}) — brak wykrywalnych tras i kontraktu (nie oceniam):")
         print("  " + ", ".join(r["name"] for r in rep["unknown"]))
-    return 1 if (strict and rep["violations"]) else 0
+    if strict and rep["violations"]:
+        return 1
+    if baseline_path and new:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

@@ -17,6 +17,9 @@ import json
 import os
 import sys
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+
 from urirun_contract.gate import check
 
 SCHEMA_HINT = """Zwróć WYŁĄCZNIE JSON: {"schemaVersion":1,"contracts":{<route>:{

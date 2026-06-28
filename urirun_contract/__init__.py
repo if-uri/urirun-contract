@@ -10,8 +10,10 @@ Public API::
     from urirun_contract import Contract, Wire, conform, enforce, check, check_wire
 """
 from urirun_contract.contract_jsonschema import to_json_schema
+from urirun_contract.contract_export import neutral_document, schema_document, write_artifacts
 from urirun_contract.contract_lint import lint_handler_signatures
 from urirun_contract.contract_reversible import callspec_fields, callspecs_from_contracts
+from urirun_contract.contract_typescript import to_typescript
 from urirun_contract.gate import (
     Contract,
     ContractViolation,
@@ -48,8 +50,12 @@ __all__ = [
     "envelope_violation",
     "find_wire",
     "lint_handler_signatures",
+    "neutral_document",
     "resolve_out_type",
+    "schema_document",
     "to_json_schema",
+    "to_typescript",
     "validate_output",
     "wire_payload",
+    "write_artifacts",
 ]

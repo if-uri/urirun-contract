@@ -18,6 +18,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
 
 from urirun_contract.contract_compat import incompatibilities  # noqa: E402
 

@@ -4,6 +4,7 @@ PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
 CONTRACTS ?= examples/windowpair/contracts.json
 FLEET ?= ..
+FLEET_BASELINE ?= ci/fleet_coverage.baseline.json
 
 help: ## Lista celów
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-12s %s\n",$$1,$$2}'
@@ -41,8 +42,8 @@ freeze: ## Zamroź obecny contracts.json jako baseline kompatybilności (po świ
 scaffold: ## Szkielet contracts.json z connectora (CONN=<katalog|manifest.json>)
 	$(PY) ci/scaffold_contract.py $(CONN)
 
-fleet-coverage: ## Pokrycie floty kontraktami (FLEET=<root>, STRICT=1 → fail na mutującym bez kontraktu)
-	$(PY) ci/fleet_coverage.py $(FLEET) $(if $(STRICT),--strict,)
+fleet-coverage: ## Pokrycie floty kontraktami (baseline ratchet; STRICT=1 → fail na każdy brak)
+	$(PY) ci/fleet_coverage.py $(FLEET) --baseline $(FLEET_BASELINE) $(if $(STRICT),--strict,)
 
 check: ## wszystkie bramy lokalne (bez LLM, te same co CI)
 	bash ci/pre_commit.sh

@@ -28,10 +28,12 @@ implementacji, dryfowały pod LLM. **Teza**: uczynić kontrakt deklarowanym, wer
 | reversible | `urirun_contract/contract_reversible.py` | re-eksport |
 | compat | `urirun_contract/contract_compat.py` | re-eksport |
 | scaffold | `urirun_contract/contract_scaffold.py` | re-eksport |
+| export | `urirun_contract/contract_export.py` | re-eksport |
+| TypeScript | `urirun_contract/contract_typescript.py` | re-eksport |
 
 Brama: `check_single_source.py` (FAIL jeśli >1 definicja kernela, np. `consumer_input_check`,
 `py_stub`, `to_json_schema`, `lint_handler_signatures`, `callspecs_from_contracts`, `incompatibilities`,
-`contracts_from_manifest`). CI weryfikuje to przy każdym push.
+`contracts_from_manifest`, `neutral_document`, `to_typescript`). CI weryfikuje to przy każdym push.
 
 ## Artefakt kontraktu
 
@@ -51,6 +53,8 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `contract_lint` | `lint_handler_signatures` — handler bez kontraktu / sygnatura != generowana |
 | `contract_reversible` | `callspecs_from_contracts` → most `urirun_twin.reversible.schema_from_contracts`: kontrakt jako schemat odwracalności silnika (strategia #3, `Connector.schema()` zwraca to zamiast ręcznych CallSpec). **Runtime ledger nadal jedzie konwencją „inverse w wyniku" (#2)**; most udowodniony end-to-end (`test_reversible.py::test_contract_derived_schema_drives_the_engine_invariant`) |
 | `contract_jsonschema` | `to_json_schema` — eksport do standardowego JSON Schema |
+| `contract_export` | `neutral_document`/`schema_document`/`write_artifacts` — neutralny JSON + JSON Schema + TS |
+| `contract_typescript` | `to_typescript` — mini-schemat kontraktu → typy TypeScript |
 | `contract_compat` | `compare_route`/`incompatibilities` — additive-only per trasa (wariancja inp/out) |
 | `nl_to_contract` (ci) | README → LLM → `contracts.json`, bramkowane przez `validate_doc` |
 | `attach_contracts` | Wzbogaca `bindings()` o `outputSchema`/`examples`/`effect`/`errors` |
@@ -65,6 +69,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 | `check_single_source.py` | jedyne definicje kernela (gate/codegen/jsonschema/lint/reversible/compat) | pytest + CI |
 | `test_no_kernel_drift` | shim toolkit re-eksportuje DOKŁADNIE `__all__`, te same obiekty (`is`) | pytest + CI |
 | `check_compat.py` | zmiana trasy przy tej samej wersji wstecznie kompatybilna (vs baseline) | pre-commit + CI |
+| `fleet_coverage.py --baseline` | ratchet floty: brak nowych mutujących connectorów bez kontraktu | pre-commit + CI |
 | `enforce` (runtime) | wyjście handlera zgodne z `out` | dev/CI (URIRUN_CONTRACT_CHECK=1) |
 | `check` na granicy serwisu | producent waliduje out, konsument waliduje inp | runtime |
 | `consumer_input_check` | cross-process: typy, pełny vs częściowy handoff | CI |
@@ -73,15 +78,18 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 
 ### Adopcja floty (`contract_scaffold` + `fleet_coverage`)
 
-~37 konektorów, kontrakt ma ~6 — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
+~37 konektorów, kontrakt ma 8 — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
 `contract_scaffold.contracts_from_manifest`/`contracts_from_routes` buduje szkielet `contracts.json`
 z tras connectora. Trasy odkrywane z DWÓCH źródeł: `discover_routes` (dekoratory `@conn.handler/
 command/query` w `core.py` — źródło prawdy connectorów Python) + `connector.manifest.json`. Efekt z
 czasownika trasy, wejście wywnioskowane z przykładów; `out`/`reversible`/`errors` zostają puste —
 `scaffold_gaps` mówi, co człowiek/LLM ma dopisać. Szkielet KONFORMUJE od razu (poprawny punkt
 startowy, nie śmieć). `ci/fleet_coverage.py` raportuje pokrycie i NAZYWA konektory z trasą mutującą
-(`/command/`) bez kontraktu (`--strict` → exit 1); konektor bez wykrywalnych tras jest raportowany
-JAWNIE jako „nieznany", nie cicho przepuszczany. `make scaffold CONN=...` / `make fleet-coverage`.
+(`/command/`) bez kontraktu. Domyślny tor używa `ci/fleet_coverage.baseline.json` jako ratchetu:
+obecne braki są jawne, ale nowy mutujący connector bez kontraktu failuje pre-commit/CI. `--strict`
+failuje na wszystkie braki i jest celem po domknięciu adopcji. Konektor bez wykrywalnych tras jest
+raportowany JAWNIE jako „nieznany", nie cicho przepuszczany. `make scaffold CONN=...` /
+`make fleet-coverage`.
 
 ### Wersjonowanie additive-only (`contract_compat`)
 
@@ -170,6 +178,9 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 - ✅ Polyglot SDK — `emit_js_module`/`emit_go_module` + `ci/emit_handlers.py --lang py|js|go`
   (`make gen-js`/`gen-go`); JS przechodzi `node --check`, Go kompiluje się i jest gofmt-clean
   (`tests/test_polyglot_emit.py`)
+- ✅ Projekcje neutral/JSON Schema/TypeScript w jednym źródle — `contract_export` i
+  `contract_typescript` żyją w `urirun_contract`; `urirun_connectors_toolkit` jest facade
+  (`tests/test_contract_export.py`, `check_single_source`)
 - ✅ Runtime `enforce` per język (JS/Go) — reużywalny guard koperty `sdk/js` + `sdk/go`,
   parytet z kernelem na złotym korpusie + fixture dryfu (`make enforce-xlang`,
   `tests/test_runtime_enforce_xlang.py`)
@@ -177,6 +188,9 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
   (`tests/test_codegen_enforce.py`)
 - ✅ Wersjonowanie additive-only per trasa — `contract_compat` (wariancja inp/out) + brama
   `check_compat.py` vs baseline (`make compat`/`freeze`, `tests/test_compat.py`)
+- ✅ Pokrycie floty jako ratchet — `fleet_coverage.py --baseline` w pre-commit/CI; stan jawny:
+  8/37 connectorów z kontraktem, 13 znanych mutujących bez kontraktu, 2 nieznane
+  (`tests/test_fleet_coverage.py`)
 - Opublikować `urirun-contract` na PyPI (+ `sdk/go` jako publikowalny moduł, `sdk/js` jako pakiet npm)
   → re-eksport toolkit bez `@git+...`, `--enforce` z bare-specifier zamiast ścieżki
 - Eksport `to_proto`/protobuf obok JSON Schema (binarne kontrakty cross-lang)

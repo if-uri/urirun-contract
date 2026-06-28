@@ -28,6 +28,8 @@ MARKERS = {
     "reversible": [r"^def callspecs_from_contracts\("],
     "compat": [r"^def incompatibilities\(", r"^def compare_route\("],
     "scaffold": [r"^def contracts_from_manifest\(", r"^def scaffold_gaps\("],
+    "export": [r"^def neutral_document\(", r"^def schema_document\("],
+    "typescript": [r"^def to_typescript\("],
     # sama brama też ma jedno źródło — pełna kopia (definiuje MARKERS + defines) = FAIL; shim = OK
     "single_source_guard": [r"^MARKERS = \{", r"^def defines\("],
 }
