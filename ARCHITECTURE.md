@@ -1,7 +1,7 @@
 # ifURI — warstwa kontraktowa: architektura systemu
 
-> Stan na 2026-06-27. Autorytatywne źródło prawdy o kształcie I/O to `contracts.json`
-> danego projektu; ten dokument opisuje mechanizm wokół niego.
+> Stan na 2026-06-28. Autorytatywne źródło prawdy o kształcie I/O to `contracts.json`
+> danego projektu; ten dokument opisuje mechanizm wokół niego (kernel + bramy + adopcja floty).
 
 ## Problem i teza
 
@@ -78,7 +78,7 @@ Złote `examples` robią podwójną robotę: fixtures konformansu + few-shot dla
 
 ### Adopcja floty (`contract_scaffold` + `fleet_coverage`)
 
-~37 konektorów, kontrakt ma 17 (i rośnie) — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
+~37 konektorów, kontrakt ma 23 (i rośnie; **0 mutujących bez kontraktu** wg `fleet_coverage`) — reszta to dryf ×N. Adopcja **generacją, nie ręką**:
 `contract_scaffold.contracts_from_manifest`/`contracts_from_routes` buduje szkielet `contracts.json`
 z tras connectora. Trasy odkrywane z TRZECH źródeł: `discover_routes` (dekoratory `@conn.handler/
 command/query` w `core.py` — źródło prawdy connectorów Python) + `connector.manifest.json` +
@@ -88,10 +88,13 @@ np. `ksef` ma 0 dekoratorów, ale `urirun_bindings()` zwraca ~39 tras). Efekt z 
 wejście wywnioskowane z przykładów; `out`/`reversible`/`errors` zostają puste — `scaffold_gaps`
 mówi, co człowiek/LLM ma dopisać. Szkielet KONFORMUJE od razu (poprawny punkt startowy, nie śmieć).
 `ci/fleet_coverage.py` raportuje pokrycie i NAZYWA konektory z trasą mutującą (`/command/`) bez
-kontraktu. Domyślny tor używa `ci/fleet_coverage.baseline.json` jako ratchetu: obecne braki są
-jawne, ale nowy mutujący connector bez kontraktu failuje pre-commit/CI. `--strict` failuje na
-wszystkie braki i jest celem po domknięciu adopcji. Konektor bez wykrywalnych tras jest raportowany
-JAWNIE jako „nieznany", nie cicho przepuszczany. `make scaffold CONN=...` / `make fleet-coverage`.
+kontraktu. **Route-level**: connector z `contracts.py`, ale z trasą mutującą bez WPISU w
+kontrakcie (np. twin 15/15, kvm 20/27), idzie do `known_partial` (ratchet) jako CZĘŚCIOWE POKRYCIE —
+nie cicha pełna zieleń. Domyślny tor używa `ci/fleet_coverage.baseline.json` jako ratchetu: obecne braki/unknown
+są jawne, ale nowy mutujący connector bez kontraktu albo nowy connector bez wykrywalnej powierzchni
+URI failuje pre-commit/CI. `--strict` failuje na wszystkie braki i jest celem po domknięciu adopcji.
+Konektor bez wykrywalnych tras jest raportowany JAWNIE jako „nieznany", nie cicho przepuszczany.
+`make scaffold CONN=...` / `make fleet-coverage`.
 
 **Wzorzec uzupełniania (od szkieletu do kontraktu).** Szkielet daje trasy + efekt + wejście; `out`
 trzeba dopisać WIERNIE wobec `core.py`, nie zgadując. Większość connectorów zwraca przez
@@ -103,7 +106,10 @@ między gałęziami → `?opcjonalne` albo `{"oneOf":[…]}`. Każdy adoptowany 
 Connectory mutujące-odwracalne deklarują `reversible:true` + `inverseRoute` (np. `namecheap-dns`
 `records/command/apply` wymusza `backup_uri` do rollbacku → inverse = ponowny apply backupu).
 Zaadoptowane jako wzorzec: `sheet`, `llm`, `github`, `webcam`, `mqtt`, `namecheap-dns` (apply
-odwracalny), `camera` (tag), `adb`, `mcp-filesystem` (move/move_to_dir odwracalne via inverse=move).
+odwracalny), `camera` (tag), `adb`, `mcp-filesystem` (move/move_to_dir odwracalne via inverse=move),
+`browser-control` (20 tras; `session/command/launch`↔`close` odwracalne, reszta type/click/fill/
+screenshot nieodwracalna), `webnode` (13 tras; `session/launch`↔`stop` + `tab/open`↔`close`),
+`invoice` i `ksef` (13 logicznych tras pokrywających 39 bindingów `test/demo/prod`).
 Errors używają KANONICZNYCH `RemediationClass` (`urirun_contracts`: `unreachable`/`unauthenticated`/
 `route-missing`/`version-skew`/`degraded-backend`/`precondition-unmet`/`no-node-url`/`unknown`).
 
@@ -112,21 +118,15 @@ Errors używają KANONICZNYCH `RemediationClass` (`urirun_contracts`: `unreachab
 > `noun/verb/action`. KLUCZ: reguła `conform` to `("/query/" in route) == (effect=="query")` — czyli
 > **każda trasa bez `/query/` jest commandem**, nie wymaga `/command/` w URI. `effect_of` jest z tym
 > zgodne (bez `/query/` → command), więc ksef SCAFFOLDUJE się do **konformującego** szkieletu (13
-> tras, 12 command / 1 query) — BEZ remapu URI. `effect_inferable(route)` wykrywa brak czasownika, a
+> tras, 11 command / 2 query) — BEZ remapu URI. `effect_inferable(route)` wykrywa brak czasownika, a
 > `scaffold_gaps` każe ZWERYFIKOWAĆ zdefaultowany command (może to być odczyt → wtedy potrzebny
-> `/query/` w URI). `scanner` jest poprawnie „nieznany” — to serwis/most (`urirun.services`), nie
-> connector z bindings.
+> `/query/` w URI). `scanner` jest jawnie znanym pakietem bez powierzchni URI — to biblioteka dla
+> serwisu/mostu (`urirun-service-scanner` / `urirun.services`), nie connector z bindings.
 
-> **Caveat trasy verb-first (webnode) — BLOKADA, do naprawy w `conform`:** connector z
-> `target=` i krótkimi trasami handlera, gdzie czasownik jest PIERWSZY (`@PAGE.handler("query/eval")`,
-> `"command/navigate"`), wpada w lukę `conform`. Reguła `("/query/" in route)` wymaga `/query/` ze
-> SLASHAMI po obu stronach; `"query/eval"` ma `query/` na początku → `False` → `conform` żąda
-> `effect != query`, choć `eval` to ODCZYT. Trasy command verb-first przechodzą (brak `/query/` =
-> command, zgodne), ale **query verb-first są odrzucane**. To NIE ksef (tam czasownika brak; tu
-> czasownik jest, ale na początku). webnode (BROWSER `noun/verb/action` OK + PAGE `verb/action`
-> blokowane na 4 trasach query) **odłożony** — nie fałszujemy efektu. Naprawa: `conform` powinien
-> rozpoznać czasownik też jako PIERWSZY segment (`route.split("/")[0] in {"query","command"}`), nie
-> tylko jako `/query/` w środku — wtedy webnode adoptuje się wiernie.
+> **Trasy verb-first (webnode) — rozwiązane:** `conform` i `effect_of` czytają teraz `query` jako
+> segment ścieżki, także gdy jest pierwszym segmentem (`query/eval`) albo występuje w pełnym URI
+> (`webnode://page/query/eval`). Dzięki temu webnode może mieć wierne kontrakty bez fałszowania
+> efektu, a brak segmentu `query` nadal pozostaje konserwatywnym `command`.
 
 ### Wersjonowanie additive-only (`contract_compat`)
 
@@ -211,7 +211,7 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
    czyta `meta.contract`). Twin planner jest już CONTRACT-AWARE: `annotate_steps`/`_step_reversible`
    (`urirun-connector-twin`) przyjmują opcjonalny `route_contracts` (URI→`meta.contract`) i — gdy
    jest — kontrakt WYGRYWA z `_REVERSIBLE_TABLE`; tablica zostaje fallbackiem dla tras bez kontraktu
-   (29/37 floty — usunięcie jej zregresowałoby je do „unknown"). Pozostała luka jest już tylko
+   (pozostałe 14/37 connectorów bez kontraktu — usunięcie jej zregresowałoby je do „unknown"). Pozostała luka jest już tylko
    WIRINGOWA: host nie przekazuje jeszcze `route_contracts` (z `meta.contract` skompilowanego
    rejestru) w wywołaniu `twin://host/plan/command/generate`. Żaden produkcyjny `Connector.schema()`
    też jeszcze nie woła mostów. Runtime ledger poprawnie jedzie konwencją „inverse w wyniku" (#2).
@@ -220,7 +220,7 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
    regen-check / `lint_handler_signatures` siedzą w `make check` + CI + pre-commit TEGO repo. W
    monorepo `urirun` nie ma `make check` ani flota-lintu na trasy mutujące bez `contracts.py` —
    konektory tam (kvm itd.) nie są bramkowane. (Pokrycie floty jest ratchetowane osobno:
-   `fleet_coverage.py`, 8/37 z kontraktem.)
+   `fleet_coverage.py`, 23/37 z kontraktem.)
 
 ## Roadmap
 
@@ -245,7 +245,7 @@ trasy) i `direct` (usługa pod jedną trasę, np. Go `consumer-go`). `make confo
 - ✅ Wersjonowanie additive-only per trasa — `contract_compat` (wariancja inp/out) + brama
   `check_compat.py` vs baseline (`make compat`/`freeze`, `tests/test_compat.py`)
 - ✅ Pokrycie floty jako ratchet — `fleet_coverage.py --baseline` w pre-commit/CI; stan jawny:
-  8/37 connectorów z kontraktem, 13 znanych mutujących bez kontraktu, 2 nieznane
+  23/37 connectorów z kontraktem, 0 znanych mutujących bez kontraktu, 1 znany unknown
   (`tests/test_fleet_coverage.py`)
 - Opublikować `urirun-contract` na PyPI (+ `sdk/go` jako publikowalny moduł, `sdk/js` jako pakiet npm)
   → re-eksport toolkit bez `@git+...`, `--enforce` z bare-specifier zamiast ścieżki

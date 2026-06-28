@@ -1,4 +1,4 @@
-.PHONY: help test contract gen gen-js gen-go schema enforce-xlang compat freeze scaffold fleet-coverage check lint install integration single-source conformance
+.PHONY: help test contract gen gen-js gen-go schema enforce-xlang compat freeze scaffold fleet-coverage docs check lint install integration single-source conformance
 BASELINE ?= examples/windowpair/contracts.baseline.json
 PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
@@ -50,6 +50,9 @@ check: ## wszystkie bramy lokalne (bez LLM, te same co CI)
 
 lint: ## CC gate (radon -n D)
 	radon cc -n D urirun_contract/
+
+docs: ## Doc-health: docval wykrywa nieaktualne/zepsute/sieroce sekcje (semcod/docval; skip gdy brak)
+	@command -v docval >/dev/null 2>&1 && docval scan . || echo "docval niedostępny — pip install docval (semcod) by sprawdzić doc-health"
 
 single-source: ## CI: kernel (gate/codegen) zdefiniowany w JEDNYM miejscu; reszta to re-eksport
 	$(PY) -m urirun_contract.check_single_source .
