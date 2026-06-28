@@ -17,8 +17,9 @@ from typing import Any
 
 _VERBS = ("query", "command")
 
-# @conn.handler("route") / @conn.command("route") / @conn.query("route")
-_HANDLER_RE = re.compile(r"\.(?:handler|command|query)\(\s*['\"]([^'\"]+)['\"]")
+# @conn.handler("route") / @conn.command("route") / @conn.query("route") — DEKORATOR (anchor `@`),
+# żeby nie łapać zwykłych wywołań metod typu `cdp.command("Page.captureScreenshot")`.
+_HANDLER_RE = re.compile(r"@\s*\w+\.(?:handler|command|query)\(\s*['\"]([^'\"]+)['\"]")
 
 
 def discover_routes(py_source: str) -> list[str]:
@@ -56,13 +57,15 @@ def route_key(uri: str) -> str:
     return "/".join(segs[1:]) if len(segs) > 1 else after
 
 
+def _segments(route: str) -> list[str]:
+    return [seg for seg in route.split("/") if seg and ":" not in seg]
+
+
 def effect_of(route: str) -> str:
-    """Efekt zgodny z REGUŁĄ `conform` (gate.py): ``query`` wtedy i tylko wtedy, gdy `/query/` jest w
-    trasie; inaczej ``command``. conform asertuje ``("/query/" in route) == (effect == "query")``,
-    więc każda trasa bez `/query/` (także ksef `auth/challenge`, czasownik na końcu) jest commandem —
-    konserwatywnie traktowana jako mutująca. Domysł może być zbyt ostrożny dla odczytu bez `/query/`;
-    `effect_inferable` to wykrywa, a `scaffold_gaps` każe zweryfikować."""
-    return "query" if "/query/" in route else "command"
+    """Efekt zgodny z REGUŁĄ `conform` (gate.py): ``query`` wtedy i tylko wtedy, gdy `query`
+    jest segmentem ścieżki; inaczej ``command``. To obejmuje klasyczne `x/query/y`, pełne
+    URI `scheme://target/x/query/y` oraz targetowane trasy `webnode://page/query/eval`."""
+    return "query" if "query" in _segments(route) else "command"
 
 
 def effect_inferable(route: str) -> bool:
@@ -70,7 +73,7 @@ def effect_inferable(route: str) -> bool:
     URI łamie noun/verb/action (np. ksef `auth/challenge`, `cert/enroll` — czasownik na końcu): nadal
     KONFORMUJE jako command (reguła conform „bez /query/ = command"), ale domysł command może być zbyt
     ostrożny dla faktycznego odczytu. `scaffold_gaps` każe to zweryfikować zamiast cicho przepuścić."""
-    segs = route.split("/")
+    segs = _segments(route)
     return "command" in segs or "query" in segs
 
 
