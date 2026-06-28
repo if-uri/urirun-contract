@@ -141,6 +141,20 @@ def test_contracts_py_is_read_by_file_not_package_import(tmp_path):
     assert rep["partial"] == []          # the contract DOES cover the mutating route — not partial
 
 
+def test_real_fleet_is_route_complete_strict_green(tmp_path):
+    """MILESTONE LOCK: the real fleet has route-complete contract coverage — 0 violations, 0 partial
+    (strict-green). Skips when sibling connectors aren't checked out (CI without the monorepo)."""
+    import os
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # if-uri/
+    import glob
+    if not glob.glob(os.path.join(root, "urirun-connector-*")):
+        import pytest
+        pytest.skip("sibling connectors not present")
+    rep = fc.scan(root)
+    assert rep["violations"] == [], [r["name"] for r in rep["violations"]]
+    assert rep["partial"] == [], [(r["name"], r["uncovered_mutating"]) for r in rep["partial"]]
+
+
 def test_partial_ratchet_only_flags_new_partials(tmp_path):
     _connector_with_contract(
         tmp_path, "urirun-connector-twin",

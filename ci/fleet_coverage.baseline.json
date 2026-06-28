@@ -1,8 +1,6 @@
 {
   "known_violations": [],
-  "known_partial": [
-    "urirun-connector-twin"
-  ],
+  "known_partial": [],
   "known_unknown": [
     "urirun-connector-scanner"
   ]
