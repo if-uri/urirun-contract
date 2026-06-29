@@ -29,6 +29,7 @@ from urirun_contract.gate import (
     envelope_violation,
     find_wire,
     resolve_out_type,
+    validate_doc,
     validate_output,
     wire_payload,
 )
@@ -55,6 +56,7 @@ __all__ = [
     "schema_document",
     "to_json_schema",
     "to_typescript",
+    "validate_doc",
     "validate_output",
     "wire_payload",
     "write_artifacts",

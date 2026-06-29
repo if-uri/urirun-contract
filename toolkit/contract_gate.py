@@ -10,5 +10,5 @@ from urirun_contract import (  # noqa: F401 â€” explicit dla IDE / type-checkerÃ
     check, check_wire, conform, consumer_input_check, contract_to_dict,
     dig, enforce, envelope_violation, find_wire,
     lint_handler_signatures, neutral_document, resolve_out_type, schema_document,
-    to_json_schema, to_typescript, validate_output, wire_payload, write_artifacts,
+    to_json_schema, to_typescript, validate_doc, validate_output, wire_payload, write_artifacts,
 )

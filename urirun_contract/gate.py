@@ -406,6 +406,37 @@ def wire_payload(wire: Wire, producer_envelope: dict) -> dict:
     return out
 
 
+def validate_doc(doc: dict) -> list[str]:
+    """Gate: validate a raw contract document (e.g. LLM output) for conformance.
+
+    Returns a list of problem strings; empty list means the document is valid.
+    Checks: effect↔URI verb agreement, mutual inverseRoute, and example payload/result
+    conformance against inp/out schemas.
+    """
+    C = doc.get("contracts", {})
+    problems: list[str] = []
+    for route, c in C.items():
+        if ("/query/" in route) != (c.get("effect") == "query"):
+            problems.append(f"{route}: efekt {c.get('effect')!r} nie zgadza się z czasownikiem URI")
+        if c.get("reversible"):
+            inv = c.get("inverseRoute")
+            if inv not in C:
+                problems.append(f"{route}: inverseRoute {inv!r} nie istnieje")
+            elif C[inv].get("inverseRoute") != route:
+                problems.append(f"{route}⟂{inv} nie jest wzajemne")
+        for i, ex in enumerate(c.get("examples", [])):
+            try:
+                check(c["inp"], ex["payload"], f"{route}#ex{i}.in")
+            except AssertionError as exc:
+                problems.append(str(exc))
+            if ex["result"].get("ok"):
+                try:
+                    check(c["out"], ex["result"], f"{route}#ex{i}.out")
+                except AssertionError as exc:
+                    problems.append(str(exc))
+    return problems
+
+
 def consumer_input_check(consumer_contract: Contract, payload: dict,
                          wire: Wire) -> "tuple[str, list]":
     """Validate the payload built from a wire edge. Returns (mode, problems).
