@@ -51,8 +51,17 @@ def file_hash(path: str) -> str:
     return hashlib.sha256(open(path, "rb").read()).hexdigest()[:10]
 
 
-def main(*roots: str) -> int:
-    found: dict[str, list[str]] = {k: [] for k in MARKERS}
+def run_marker_gate(
+    markers: dict[str, list[str]],
+    roots: tuple[str, ...] | list[str],
+    *,
+    ok_label: str = "jedno źródło",
+    missing_label: str = "brak",
+    source_hint: str = "zostaw JEDNO źródło ({comp}) w pakiecie urirun_contract; "
+                       "resztę zastąp cienkim re-eksportem/shimem "
+                       "(`from urirun_contract.… import *`)",
+) -> int:
+    found: dict[str, list[str]] = {k: [] for k in markers}
     seen: set[str] = set()
     for root in roots:
         for dp, dirs, files in os.walk(root):
@@ -64,14 +73,14 @@ def main(*roots: str) -> int:
                 if p in seen:
                     continue
                 seen.add(p)
-                for comp, pats in MARKERS.items():
+                for comp, pats in markers.items():
                     if defines(p, pats):
                         found[comp].append(p)
 
     bad = False
     for comp, paths in found.items():
         if len(paths) <= 1:
-            print(f"  OK  {comp}: jedno źródło" + (f" ({paths[0]})" if paths else " (brak)"))
+            print(f"  OK  {comp}: {ok_label}" + (f" ({paths[0]})" if paths else f" ({missing_label})"))
             continue
         bad = True
         hashes = {file_hash(p) for p in paths}
@@ -80,9 +89,12 @@ def main(*roots: str) -> int:
         for p in sorted(paths):
             n = sum(1 for _ in open(p, encoding="utf-8", errors="ignore"))
             print(f"         {n:>4}L  {p}  [{file_hash(p)}]")
-        print(f"         → zostaw JEDNO źródło ({comp}) w pakiecie urirun_contract; "
-              f"resztę zastąp cienkim re-eksportem/shimem (`from urirun_contract.… import *`)")
+        print(f"         → {source_hint.format(comp=comp)}")
     return 1 if bad else 0
+
+
+def main(*roots: str) -> int:
+    return run_marker_gate(MARKERS, roots or (".",))
 
 
 if __name__ == "__main__":
