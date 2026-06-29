@@ -1,4 +1,4 @@
-project: /home/tom/github/if-uri/urirun-contract
+project: ~/github/if-uri/urirun-contract
 generated_from: code2llm call graph analysis
 stats:
   total_nodes: 78
