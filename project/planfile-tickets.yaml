@@ -1,5 +1,4 @@
 source: code2llm
-# generated in 0.03s
 schema: code2llm.planfile_tickets.v1
 project_root: ~/github/if-uri/urirun-contract
 tickets:
@@ -1078,5 +1077,21 @@ tickets:
   - TODO/nl_to_contract.py
   dedupe_key: 'code2llm:smell:god_function:TODO/nl_to_contract.py:41:God Function:
     validate_doc'
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_fleet_coverage.test_real_fleet_is_route_complete_strict_green'
+  description: 'Test `tests.test_fleet_coverage.test_real_fleet_is_route_complete_strict_green`
+    took 2.21s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_fleet_coverage.py
+  dedupe_key: test-optimization:tests.test_fleet_coverage:test_real_fleet_is_route_complete_strict_green
 applied: []
 skipped: []

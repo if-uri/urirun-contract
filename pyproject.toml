@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "urirun-contract"
-version = "0.1.0"
+version = "0.1.1"
 description = "Route contracts for urirun connectors — declared output shape, effect class, reversibility and composition wires"
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-authors = [{ name = "Tom Sapletta", email = "info@softreck.dev" }]
+authors = [{ name = "Tom Sapletta", email = "info@softreck.dev" }, {name = "Tom Sapletta",email = "tom@sapletta.com"}]
 requires-python = ">=3.10"
 keywords = ["urirun", "contract", "connector", "json-schema", "codegen", "polyglot", "validation"]
 dependencies = []  # zero required deps — gate works standalone; urirun optional for attach_contracts
@@ -26,7 +26,11 @@ classifiers = [
 
 [project.optional-dependencies]
 urirun = ["urirun>=0.4.190"]
-dev = ["pytest>=7", "radon", "jsonschema", "build", "twine"]
+dev = ["pytest>=7", "radon", "jsonschema", "build", "twine",
+    "goal>=2.1.0",
+    "costs>=0.1.53",
+    "pfix>=0.1.60",
+]
 
 [project.urls]
 Homepage   = "https://urirun.com"
@@ -34,3 +38,32 @@ Repository = "https://github.com/if-uri/urirun-contract"
 
 [tool.setuptools.packages.find]
 include = ["urirun_contract*"]
+
+[tool.pfix]
+# Self-healing Python configuration
+model = "openrouter/qwen/qwen3-coder-next"
+auto_apply = true
+auto_install_deps = true
+auto_restart = false
+max_retries = 3
+create_backups = false
+git_auto_commit = false
+
+[tool.pfix.runtime_todo]
+enabled = true
+todo_file = "TODO.md"
+min_severity = "low"
+deduplicate = true
+
+[tool.costs]
+# AI Cost tracking configuration
+badge = true
+update_readme = true
+readme_path = "README.md"
+default_model = "openrouter/qwen/qwen3-coder-next"
+analysis_mode = "byok"
+full_history = true
+max_commits = 500
+
+# Cost thresholds for badge colors (USD)
+badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0 }

@@ -1,7 +1,7 @@
 {
   "name": "urirun-contract",
-  "version": "0.1.0",
-  "description": "Runtime envelope guard for urirun connectors — port of the contract gate (check + envelopeViolation)",
+  "version": "0.1.1",
+  "description": "Runtime envelope guard for urirun connectors \u2014 port of the contract gate (check + envelopeViolation)",
   "type": "module",
   "main": "contract.mjs",
   "exports": {
@@ -22,7 +22,10 @@
     "polyglot"
   ],
   "license": "Apache-2.0",
-  "author": "Tom Sapletta <info@softreck.dev>",
+  "author": {
+    "name": "Tom Sapletta",
+    "email": "tom@sapletta.com"
+  },
   "homepage": "https://urirun.com",
   "repository": {
     "type": "git",
