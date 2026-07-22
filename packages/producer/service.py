@@ -33,7 +33,7 @@ def close_handler(id: str = "active") -> dict:
             "inverse": {"path": "window/command/restore", "args": {"snapshot": snapshot}}}
 
 
-class Handler(BaseHTTPRequestHandler):
+class ProducerServiceHandler(BaseHTTPRequestHandler):
     def log_message(self, *a):  # cisza
         pass
 
@@ -65,4 +65,4 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8801"))
     print(f"producer: {ROUTE} na :{port}", flush=True)
-    ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()
+    ThreadingHTTPServer(("0.0.0.0", port), ProducerServiceHandler).serve_forever()

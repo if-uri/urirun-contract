@@ -31,7 +31,7 @@ def restore_handler(snapshot: dict) -> dict:
             "inverse": {"path": "window/command/close", "args": {"id": snapshot.get("id")}}}
 
 
-class Handler(BaseHTTPRequestHandler):
+class ConsumerServiceHandler(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
@@ -72,4 +72,4 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8802"))
     print(f"consumer: {ROUTE} na :{port}", flush=True)
-    ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()
+    ThreadingHTTPServer(("0.0.0.0", port), ConsumerServiceHandler).serve_forever()
