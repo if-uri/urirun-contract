@@ -1,4 +1,4 @@
-.PHONY: help test contract gen gen-js gen-go schema enforce-xlang compat freeze scaffold fleet-coverage docs check lint install integration single-source conformance
+.PHONY: help test doctor-build doctor-test doctor-health contract gen gen-js gen-go schema enforce-xlang compat freeze scaffold fleet-coverage docs check lint install integration single-source conformance
 BASELINE ?= examples/windowpair/contracts.baseline.json
 PY ?= python
 export URIRUN_CONTRACT_CHECK = 1
@@ -12,8 +12,16 @@ help: ## Lista celów
 install: ## pip install -e .
 	pip install -e .
 
-test: ## pytest tests/
+doctor-build: ## Instalacja pakietu dla bezsieciowego wykonawcy OneDev
+	$(PY) -m pip install --no-deps --no-build-isolation -e .
+
+doctor-test: ## Testy wymagane przez Doctor/OneDev
 	$(PY) -m pytest tests/ -q
+
+doctor-health: ## Kontrola importu pakietu po instalacji
+	$(PY) -c "import urirun_contract"
+
+test: doctor-test ## pytest tests/
 
 contract: ## README.md → contracts.json (lokalny LLM, bramkowane)
 	$(PY) ci/nl_to_contract.py

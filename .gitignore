@@ -16,7 +16,6 @@ xlang/peer_go
 xlang/peer_rs
 xlang/contracts.json
 xlang/rust/target/
-.env.example
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -45,7 +44,6 @@ workflows/
 !/.github/workflows/*.yml
 !/.github/workflows/*.yaml
 output/
-.env.example
 __pycache__/
 *.py[codz]
 *$py.class
