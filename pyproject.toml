@@ -27,7 +27,6 @@ classifiers = [
 [project.optional-dependencies]
 urirun = ["urirun>=0.4.190"]
 dev = ["pytest>=7", "radon", "jsonschema", "build", "twine",
-    "goal>=2.1.0",
     "costs>=0.1.53",
     "pfix>=0.1.60",
 ]
@@ -67,3 +66,9 @@ max_commits = 500
 
 # Cost thresholds for badge colors (USD)
 badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0 }
+
+[tool.uv.dependency-groups.automation]
+requires-python = ">=3.12"
+
+[dependency-groups]
+automation = ["goal>=2.1.302"]
