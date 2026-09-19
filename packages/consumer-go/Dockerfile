@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.22-alpine@sha256:4eb607b9efd29f7ecd2d5a5214592b2c012d8194e6e9b89cfe15e65e9226a745 AS builder
 WORKDIR /build
 COPY packages/consumer-go/go.mod .
 COPY packages/consumer-go/service.go .
